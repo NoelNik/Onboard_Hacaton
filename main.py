@@ -1,6 +1,6 @@
 import sqlite3
-import bot
+from bot import start
 from config import TOKEN
 
 if __name__ == "__main__":
-    pass
+    start()

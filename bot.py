@@ -1,9 +1,15 @@
 import telebot
 from telebot import types
+from config import TOKEN
 
 
 
-bot = telebot.TeleBot("5980220346:AAFqyiB6tlI4uAZ5Uv9ZrE5apS5Xc7g03W4")
+bot = telebot.TeleBot(TOKEN)
+
+def start():
+    @bot.message_handler(commands=['start', 'help'])
+    def welcome(message):
+        bot.send_message(message.chat.id, "COCI")
 
 
-bot.polling()
+    bot.polling()
