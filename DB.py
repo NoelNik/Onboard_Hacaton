@@ -6,7 +6,7 @@ cur = con.cursor()
 
 
 def newUser(name, telegramID):
-
+    
     cur.execute(f"""INSERT INTO interns (Name, comingData, TelegramID) VALUES 
         ('{name}', '{datetime.date.today()}', '{telegramID}') """)
     con.commit()
