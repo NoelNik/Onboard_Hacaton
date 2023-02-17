@@ -5,13 +5,12 @@ con = sqlite3.connect("baza.db")
 cur = con.cursor()
 
 
-def newUser(name):
+def newUser(name, telegramID):
     cur.execute(f"""INSERT INTO interns VALUES
-        ('{name}', '{datetime.date.today()}') """)
+        ('{name}', '{datetime.date.today()}, '{telegramID}') """)
     con.commit()
 
 
-def deleteUser(name):
-    cur.execute(f"""DELETE FROM interns WHERE name = '{name}'""")
+def deleteUser(telegramID):
+    cur.execute(f"""DELETE FROM interns WHERE TelegramID = '{telegramID}'""")
     con.commit()
-
