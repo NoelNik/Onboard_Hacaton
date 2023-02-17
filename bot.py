@@ -18,12 +18,26 @@ def welcome(message):
     item4 = types.KeyboardButton('Показать задания')
 
     markup.add(item1, item2, item3, item4)
-    bot.send_message(message.chat.id, f'С чего вы хотите начать, {message.chat.first_name}</b>',
-                     parse_mode='html', reply_markup=markup)
+    bot.send_message(message.chat.id, f'С чего вы хотите начать, {message.chat.first_name}',
+                     reply_markup=markup)
+
 
 @bot.message_handler(content_types=['text'])
 def message_echo(message):
-    pass
+    if message.text == "Рассказать про нашу компанию":
+        bot.send_message(message.chat.id, "nu tipa sosi")
+    elif message.text == "Показать свой профиль":
+        bot.send_message(message.chat.id, "nekit lox")
+    elif message.text == "Связь с HR":
+        bot.send_message(message.chat.id, "a ti ne ofigel")
+    elif message.text == "Показать задания":
+        bot.send_message(message.chat.id, "net, otdixai")
+    else:
+        item1 = types.KeyboardButton('/start')
+        item2 = types.KeyboardButton('/help')
+        markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
+        markup.add(item1, item2)
+        bot.send_message(message.chat.id, "Я не понял вашу команду", reply_markup=markup)
 
 def start():
-    bot.polling()
+    bot.infinity_polling()
