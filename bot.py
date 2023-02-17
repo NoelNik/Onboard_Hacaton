@@ -1,16 +1,23 @@
 import telebot
 from telebot import types
+import DB
 from config import TOKEN
-from DB import getTask, getExp
+from DB import if_user_exist, getExp, getData, getTask
 
 bot = telebot.TeleBot(TOKEN)
 
 
 @bot.message_handler(commands=['start'])
 def welcome(message):
+
     bot.send_message(message.chat.id, "Привет! Я буду твоим помошником для удобной адаптации к новой рабочей среде")
     sti = open('stickers/sticker.webp', 'rb')
     bot.send_sticker(message.chat.id, sti)
+    menu(message)
+
+
+@bot.message_handler(commands=['menu'])
+def menu(message):
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
     item1 = types.KeyboardButton('Рассказать про нашу компанию')
     item2 = types.KeyboardButton('Показать свой профиль')
@@ -32,6 +39,13 @@ def message_echo(message):
         bot.send_message(message.chat.id,
                          f"{message.chat.first_name}, вот сколько у тебя баллов: {getExp(message.chat.id)}")
 
+    elif message.text == "Связь с HR":
+        chat_hr(message)
+
+    elif message.text == 'Остановить поиск':
+        DB.deleteQueue(message.chat.id)
+        menu(message)
+
     elif message.text == "Показать задания":
         bot.send_message(message.chat.id, f"Вот список твоих заданий: {getTask(message.chat.id)}")
 
@@ -41,6 +55,13 @@ def message_echo(message):
         markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
         markup.add(item1, item2)
         bot.send_message(message.chat.id, "Я не понял вашу команду", reply_markup=markup)
+
+
+def chat_hr(message):
+    DB.appendQueue(message.chat.id)
+    markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
+    markup.add(types.KeyboardButton('Остановить поиск'))
+    bot.send_message(message.chat.id, "Подождите, пока сотрудник не присоединиться к чату", reply_markup=markup)
 
 
 def start():
