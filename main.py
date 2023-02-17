@@ -1,6 +1,6 @@
-import telebot, sqlite3
+import sqlite3
+import bot
 from config import TOKEN
 
 if __name__ == "__main__":
     pass
-
