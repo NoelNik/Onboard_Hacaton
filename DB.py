@@ -27,3 +27,12 @@ def getExp(telegramID):
 
 def getData(telegramID):
     return cur.execute(f"""SELECT comingData FROM interns WHERE TelegramID = '{telegramID}'""").fetchone()[0]
+
+
+def getTask(telegramID):
+    return cur.execute(f"""SELECT task FROM interns WHERE TelegramID = '{telegramID}'""").fetchone()[0]
+
+def addTask(telegramID, newTask):
+    cur.execute(f"""UPDATE interns set task = '{newTask}' WHERE TelegramID = '{telegramID}'""")
+    con.commit()
+    return "Задание обновлено"
