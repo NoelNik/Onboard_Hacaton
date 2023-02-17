@@ -1,3 +1,4 @@
-import random, os, telebot, logging
-from bs4 import BeautifulSoup
-from telebot import types
+import telebot
+import sqlite3
+
+sqlite3.connect("baza.db")
