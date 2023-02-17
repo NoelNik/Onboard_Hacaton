@@ -1,4 +1,6 @@
-import telebot
-import sqlite3
+import telebot, sqlite3
+from config import TOKEN
 
-sqlite3.connect("baza.db")
+if __name__ == "__main__":
+    pass
+
