@@ -10,7 +10,7 @@ def newUser(name, telegramID):
         cur.execute(f"""INSERT INTO interns (Name, comingData, TelegramID) VALUES 
             ('{name}', '{datetime.date.today()}', '{telegramID}') """)
         con.commit()
-    
+
 
 def deleteUser(telegramID):
     cur.execute(f"""DELETE FROM interns WHERE TelegramID = '{telegramID}'""")
@@ -20,3 +20,6 @@ def deleteUser(telegramID):
 def getExp(telegramID):
     return cur.execute(f"""SELECT exp FROM interns WHERE TelegramID = '{telegramID}'""").fetchone()[0]
 
+
+def if_user_exist(telegramID):
+    return bool(cur.execute(f"""SELECT TelegramID FROM interns WHERE TelegramID = '{telegramID}'""").fetchone())
