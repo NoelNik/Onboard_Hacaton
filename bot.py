@@ -8,59 +8,69 @@ bot = telebot.TeleBot(TOKEN)
 
 
 
-@bot.message_handler(commands=['admin'])
-def welcome(message):
-    bot.send_message(message.chat.id, "Пожлалуйста, введите пароль: ")
-
 
 @bot.message_handler(commands=['start'])
 def welcome(message):
-    DB.newUser(message.chat.id)
-    bot.send_message(message.chat.id, "Привет! Я буду твоим помошником для удобной адаптации к новой рабочей среде")
-    sti = open('media/stickers/sticker.webp', 'rb')
-    bot.send_sticker(message.chat.id, sti)
-    menu(message)
+    if (str(message.chat.id),) in DB.getQueue():
+        bot.send_message(message.chat.id, "Вы в очереди! Нажмите на кнопку остановить поиск.")
+    else:
+        DB.newUser(message.chat.id)
+        bot.send_message(message.chat.id, "Привет! Я буду твоим помошником для удобной адаптации к новой рабочей среде")
+        sti = open('media/stickers/sticker.webp', 'rb')
+        bot.send_sticker(message.chat.id, sti)
+        menu(message)
 
 
 # потом добавлю
 @bot.message_handler(commands=['help'])
 def help_me_pls(message):
-    msg = "Я бот, который поможет тебе с адаптацией на новом рабочем месте. " + \
-    "Напиши мне /menu, чтобы отрыть меню, в котором ты сможешь получить дополнительную инофрмацию о компании, " + \
-    "посмотреть свой профиль, посмотреть свои задания или связаться с HR при необходимости, " + \
-    "а также посмотреть нормативные документы. И всё это в любое время"
-    bot.send_message(message.chat.id, msg)
+    if (str(message.chat.id),) in DB.getQueue():
+        bot.send_message(message.chat.id, "Вы в очереди! Нажмите на кнопку остановить поиск.")
+    else:
+        msg = "Я бот, который поможет тебе с адаптацией на новом рабочем месте. " + \
+              "Напиши мне /menu, чтобы отрыть меню, в котором ты сможешь получить дополнительную инофрмацию о компании, " + \
+              "посмотреть свой профиль, посмотреть свои задания или связаться с HR при необходимости, " + \
+              "а также посмотреть нормативные документы. И всё это в любое время"
+        bot.send_message(message.chat.id, msg)
 
 
 @bot.message_handler(commands=['menu'])
 def menu(message):
-    markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
-    item1 = types.KeyboardButton('Рассказать про нашу компанию')
-    item2 = types.KeyboardButton('Показать свой профиль')
-    item3 = types.KeyboardButton('Связь с HR')
-    item4 = types.KeyboardButton('Показать задания')
-    item5 = types.KeyboardButton('Нормативные документы')
-    item6 = types.KeyboardButton('/help')
+    if (str(message.chat.id),) in DB.getQueue():
+        bot.send_message(message.chat.id, "Вы в очереди! Нажмите на кнопку остановить поиск.")
+    else:
+        markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
+        item1 = types.KeyboardButton('Рассказать про нашу компанию')
+        item2 = types.KeyboardButton('Показать свой профиль')
+        item3 = types.KeyboardButton('Связь с HR')
+        item4 = types.KeyboardButton('Показать задания')
+        item5 = types.KeyboardButton('Нормативные документы')
+        item6 = types.KeyboardButton('/help')
 
-    markup.add(item1, item2, item3, item4, item5, item6)
-    if DB.if_user_admin(message.chat.id):
-        markup.add(types.KeyboardButton('/menu_for_admin'))
-    bot.send_message(message.chat.id, f'С чего вы хотите начать, {message.chat.first_name}',
-                     reply_markup=markup)
+        markup.add(item1, item2, item3, item4, item5, item6)
+        if DB.if_user_admin(message.chat.id):
+            markup.add(types.KeyboardButton('/menu_for_admin'))
+        bot.send_message(message.chat.id, f'С чего вы хотите начать, {message.chat.first_name}',
+                         reply_markup=markup)
 
 
 @bot.message_handler(commands=['menu_for_admin'])
 def menu_for_admin(message):
-    if DB.if_user_admin(message.chat.id):
-        markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
-        item1 = types.KeyboardButton('Добавить задания')
-        item2 = types.KeyboardButton('Показать профиль работника')
-        item3 = types.KeyboardButton('Открыть диолог со стажером')
-        item4 = types.KeyboardButton('Удалить работника')
+    if (str(message.chat.id),) in DB.getQueue():
+        bot.send_message(message.chat.id, "Вы в очереди! Нажмите на кнопку остановить поиск.")
+    else:
+        if DB.if_user_admin(message.chat.id):
+            markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
+            item1 = types.KeyboardButton('Добавить задания')
+            item2 = types.KeyboardButton('Показать профиль работника')
+            item3 = types.KeyboardButton('Открыть диолог со стажером')
+            item4 = types.KeyboardButton('Удалить работника')
 
-        markup.add(item1, item2, item3, item4)
-        bot.send_message(message.chat.id, f'С чего вы хотите начать, {message.chat.first_name}',
-                         reply_markup=markup)
+            markup.add(item1, item2, item3, item4)
+            bot.send_message(message.chat.id, f'С чего вы хотите начать, {message.chat.first_name}',
+                             reply_markup=markup)
+        else:
+            bot.send_message(message.chat.id, "Недостаточно прав!")
 
 
 @bot.message_handler(content_types=['text'])
@@ -131,6 +141,8 @@ def message_echo(message):
                                  f"{num}. Дата прихода - {elem[0]}, кол-во баллов - {elem[2]}")
 
         elif message.text == "Удалить работника":
+            bot_msg = bot.send_message(message.chat.id, "Введите ID работника, которого желаете удалить")
+            bot.register_next_step_handler(bot_msg, deleteIntern)
             pass
 
         elif message.text == "Открыть диолог со стажером":
@@ -146,27 +158,33 @@ def message_echo(message):
                 bot.send_message(message.chat.id, "В очереди никого нет!")
                 menu_for_admin(message)
         else:
-            bot.send_message(message.chat.id, "Я не понял вашу команду")
-            menu_for_admin(message)
+            if (str(message.chat.id),) in DB.getQueue():
+                bot.send_message(message.chat.id, "Вы в очереди! Нажмите на кнопку остановить поиск.")
+            else:
+                bot.send_message(message.chat.id, "Я не понял вашу команду")
+                menu_for_admin(message)
     else:
-        bot.send_message(message.chat.id, "Я не понял вашу команду")
-        menu(message)
+        if (str(message.chat.id),) in DB.getQueue():
+            bot.send_message(message.chat.id, "Вы в очереди! Нажмите на кнопку остановить поиск.")
+        else:
+            bot.send_message(message.chat.id, "Я не понял вашу команду")
+            menu(message)
 
 
 def get_documents(message):
     if message.text == "Для устройства на работу":
         msg = "Вам потребуется:\n" + \
-        "– паспорт c регистрацией или иной документ, удостоверяющий личность;\n" + \
-        "– документ об образовании и (или) о квалификации или наличии специальных знаний\n" + \
-        "– справку о наличии (отсутствии) судимости\n" + \
-        "– трудовая книжка (при наличии)."
+              "– паспорт c регистрацией или иной документ, удостоверяющий личность;\n" + \
+              "– документ об образовании и (или) о квалификации или наличии специальных знаний\n" + \
+              "– справку о наличии (отсутствии) судимости\n" + \
+              "– трудовая книжка (при наличии)."
         bot.send_message(message.chat.id, msg)
     elif message.text == "Как уйти в отпуск?":
         unplanned = "Вы можете уйти в незапланированный отпуск, если вы принадлежите одной из следующих групп:\n" + \
-        "– женщины — до декрета и после него. И их мужья;\n" + \
-        "– работники до 18 лет;\n" + \
-        "– усыновители детей до трех месяцев;\n" + \
-        "– cовместители, если у них отпуск на основной работе."
+                    "– женщины — до декрета и после него. И их мужья;\n" + \
+                    "– работники до 18 лет;\n" + \
+                    "– усыновители детей до трех месяцев;\n" + \
+                    "– cовместители, если у них отпуск на основной работе."
         bot.send_message(message.chat.id, unplanned)
         days_left = DB.check_for_data(message.chat.id)
         planned = f"Вы можете выйти в отпуск {'через', days_left, 'дней' if days_left > 0 else 'уже сейчас!'}"
@@ -196,3 +214,8 @@ def complete_task(message):
 def start():
     bot.infinity_polling()
 
+
+def deleteIntern(message): # надо сделать проверку на id
+    DB.deleteUser(message.text)
+    bot.send_message(message.chat.id, f'Вы удалили пользователя {message.text}')
+    menu_for_admin(message)
