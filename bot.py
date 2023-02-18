@@ -40,12 +40,13 @@ def menu(message):
     item3 = types.KeyboardButton('Связь с HR')
     item4 = types.KeyboardButton('Показать задания')
     item5 = types.KeyboardButton('Нормативные документы')
-    item6 = types.KeyboardButton('/help')
+    item6 = types.KeyboardButton('Таблица лидеров')
+    item7 = types.KeyboardButton('/help')
 
-    markup.add(item1, item2, item3, item4, item5, item6)
+    markup.add(item1, item2, item3, item4, item5, item6, item7)
     if DB.if_user_admin(message.chat.id):
         markup.add(types.KeyboardButton('/menu_for_admin'))
-    bot.send_message(message.chat.id, f'С чего вы хотите начать, {message.chat.first_name}',
+    bot.send_message(message.chat.id, f'С чем вам помочь, {message.chat.first_name}',
                      reply_markup=markup)
 
 
@@ -59,7 +60,7 @@ def menu_for_admin(message):
         item4 = types.KeyboardButton('Удалить работника')
 
         markup.add(item1, item2, item3, item4)
-        bot.send_message(message.chat.id, f'С чего вы хотите начать, {message.chat.first_name}',
+        bot.send_message(message.chat.id, f'С чем вам помочь, {message.chat.first_name}',
                          reply_markup=markup)
 
 
@@ -72,7 +73,8 @@ def message_echo(message):
         item3 = types.KeyboardButton('Связь с HR')
         item4 = types.KeyboardButton('Показать задания')
         item5 = types.KeyboardButton('Нормативные документы')
-        markup.add(item1, item2, item3, item4, item5)
+        item6 = types.KeyboardButton('Таблица лидеров')
+        markup.add(item1, item2, item3, item4, item5, item6)
         if DB.if_user_admin(DB.getIDinterlocutor(message.chat.id)):
             markup.add(types.KeyboardButton('/menu_for_admin'))
         bot.send_message(DB.getIDinterlocutor(message.chat.id), 'Диалог остановлен!', reply_markup=markup)
@@ -120,6 +122,12 @@ def message_echo(message):
         markup.add(item1, item2, item3, item4)
         bot_msg = bot.send_message(message.chat.id, "Какой документ вас интересует?", reply_markup=markup)
         bot.register_next_step_handler(bot_msg, get_documents)
+    
+    elif message.text == "Таблица лидеров":
+        pass
+
+
+    # админ панель
     elif DB.if_user_admin(message.chat.id):
         if message.text == "Добавить задания":
             pass
