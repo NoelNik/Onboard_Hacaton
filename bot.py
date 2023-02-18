@@ -7,6 +7,7 @@ from config import TOKEN, PASSWORD
 bot = telebot.TeleBot(TOKEN)
 
 
+
 @bot.message_handler(commands=['admin'])
 def welcome(message):
     bot.send_message(message.chat.id, "Пожлалуйста, введите пароль: ")
@@ -21,6 +22,7 @@ def welcome(message):
     menu(message)
 
 
+# потом добавлю
 @bot.message_handler(commands=['help'])
 def help_me_pls(message):
     msg = "Я бот, который поможет тебе с адаптацией на новом рабочем месте. " + \
@@ -64,29 +66,22 @@ def menu_for_admin(message):
 @bot.message_handler(content_types=['text'])
 def message_echo(message):
     if message.text == 'Остановить диалог':
-        bot.send_message(DB.getIDinterlocutor(message.chat.id), 'Диалог остановлен!')
+        markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
+        item1 = types.KeyboardButton('Рассказать про нашу компанию')
+        item2 = types.KeyboardButton('Показать свой профиль')
+        item3 = types.KeyboardButton('Связь с HR')
+        item4 = types.KeyboardButton('Показать задания')
+        item5 = types.KeyboardButton('Нормативные документы')
+        markup.add(item1, item2, item3, item4, item5)
+        if DB.if_user_admin(DB.getIDinterlocutor(message.chat.id)):
+            markup.add(types.KeyboardButton('/menu_for_admin'))
+        bot.send_message(DB.getIDinterlocutor(message.chat.id), 'Диалог остановлен!', reply_markup=markup)
+
         bot.send_message(message.chat.id, 'Диалог остановлен!')
         DB.deleteChatActive(message.chat.id)
         menu(message)
     elif DB.isChatActive(message.chat.id):
         bot.send_message(DB.getIDinterlocutor(message.chat.id), message.text)
-    elif DB.if_user_admin(message.chat.id):
-        # TODO: Дорасписать функции для админки
-        if message.text == "Добавить задания":
-            pass
-        elif message.text == "Показать профиль работника":
-            pass
-        elif message.text == "Удалить работника":
-            pass
-        elif message.text == "Открыть диолог со стажером":
-            markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
-            markup.add(types.KeyboardButton('Остановить диалог'))
-            q = DB.getQueue()
-            if q:
-                DB.deleteQueue(q[0][0])
-                DB.appendChatActive(q[0][0], message.chat.id)
-                bot.send_message(message.chat.id, "Вы подключились к диалогу!", reply_markup=markup)
-                bot.send_message(q[0][0], "Вы подключились к диалогу, задавайте вопросы!", reply_markup=markup)
 
     elif message.text == "Рассказать про нашу компанию":
         bot.send_message(message.chat.id, "Перейди по ссылке за всей нужной информацией :)")
@@ -133,32 +128,34 @@ def message_echo(message):
         elif message.text == "Удалить работника":
             pass
         elif message.text == "Открыть диолог со стажером":
-            markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
-            markup.add(types.KeyboardButton('Остановить диалог'))
             q = DB.getQueue()
             if q:
+                markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
+                markup.add(types.KeyboardButton('Остановить диалог'))
                 DB.deleteQueue(q[0][0])
                 DB.appendChatActive(q[0][0], message.chat.id)
                 bot.send_message(message.chat.id, "Вы подключились к диалогу!", reply_markup=markup)
                 bot.send_message(q[0][0], "Вы подключились к диалогу, задавайте вопросы!", reply_markup=markup)
+            else:
+                bot.send_message(message.chat.id, "В очереди никого нет!")
+                menu_for_admin(message)
         else:
             bot.send_message(message.chat.id, "Я не понял вашу команду")
-            menu(message)
+            menu_for_admin(message)
     else:
         bot.send_message(message.chat.id, "Я не понял вашу команду")
         menu(message)
 
 
 def get_documents(message):
-    text = message.text.lower()
-    if ("устр" in text or "работ" in text):
+    if message.text == "Для устройства на работу":
         msg = "Вам потребуется:\n" + \
         "– паспорт c регистрацией или иной документ, удостоверяющий личность;\n" + \
         "– документ об образовании и (или) о квалификации или наличии специальных знаний\n" + \
         "– справку о наличии (отсутствии) судимости\n" + \
         "– трудовая книжка (при наличии)."
         bot.send_message(message.chat.id, msg)
-    elif "отпуск" in text:
+    elif message.text == "Как уйти в отпуск?":
         unplanned = "Вы можете уйти в незапланированный отпуск, если вы принадлежите одной из следующих групп:\n" + \
         "– женщины — до декрета и после него. И их мужья;\n" + \
         "– работники до 18 лет;\n" + \
@@ -166,15 +163,15 @@ def get_documents(message):
         "– cовместители, если у них отпуск на основной работе."
         bot.send_message(message.chat.id, unplanned)
         days_left = DB.check_for_data(message.chat.id)
-        planned = f"Вы можете выйти в отпуск через {days_left} дней"
+        planned = f"Вы можете выйти в отпуск {'через', days_left, 'дней' if days_left > 0 else 'уже сейчас!'}"
         bot.send_message(message.chat.id, planned)
-    elif "увол" in text:
-        getAwayDoc = open('media/documents/Заяление об увольнении.docx', 'rb')
+
+    elif message.text == "Увольнение":
+        getAwayDoc = open('media/documents/Заявление об увольнении.docx', 'rb')
         bot.send_document(message.chat.id, getAwayDoc, caption="В таком случае, заполните это заявление")
     else:
         bot.send_message(message.chat.id, "Извините, я вас не понял")
     menu(message)
-
 
 
 def chat_hr(message):
@@ -192,3 +189,4 @@ def complete_task(message):
 
 def start():
     bot.infinity_polling()
+
