@@ -133,7 +133,7 @@ def message_echo(message):
     
     # TODO: дописать призы
     elif message.text == "Получить приз":
-        pass
+        bot.send_message(message.chat.id, DB.check_for_win(message.chat.id))
 
     # админ панель
     elif DB.if_user_admin(message.chat.id):

@@ -31,30 +31,40 @@ def getExp(telegramID):
 
 
 def check_for_win(telegramID):
+    stage = cur.execute(f"""SELECT stage FROM interns WHERE TelegramID = '{telegramID}'""").fetchone()[0]
     prize_list = {"first": ["Стикер", "ручка"], "second": ["худи", "мышка"], "third": ["яхта", "машина"]}
     quantity_for_first = 15
     quantity_for_second = 30
     quantity_for_third = 45
-    if getExp(telegramID) > quantity_for_first:
+    if (getExp(telegramID) > quantity_for_first) and (stage == 0):
+        cur.execute(f"""UPDATE interns set stage = '{stage + 1}' WHERE TelegramID = '{telegramID}'""")
         ind = randint(0, len(prize_list["first"]) - 1)
         prize = prize_list["first"][ind]
         prize_list["first"].pop(ind)
-        return prize
+        return f"Вы выйграли {prize}"
 
-    elif getExp(telegramID) > quantity_for_second:
+    elif getExp(telegramID) > quantity_for_second and (stage == 1):
+        cur.execute(f"""UPDATE interns set stage = '{stage + 1}' WHERE TelegramID = '{telegramID}'""")
         ind = randint(0, len(prize_list["second"]) - 1)
         prize = prize_list["second"][ind]
         prize_list["second"].pop(ind)
-        return prize
+        return f"Вы выйграли {prize}"
 
-    elif getExp(telegramID) > quantity_for_third:
+    elif getExp(telegramID) > quantity_for_third and (stage == 2):
+        cur.execute(f"""UPDATE interns set stage = '{stage + 1}' WHERE TelegramID = '{telegramID}'""")
         ind = randint(0, len(prize_list["third"]) - 1)
         prize = prize_list["third"][ind]
         prize_list["third"].pop(ind)
-        return prize
+        return f"Вы выйграли {prize}"
 
     else:
-        return None
+        exp = getExp(telegramID)
+        if exp < quantity_for_first:
+            return f"У вас нет призов. Кол-во баллов до следующей награды: {quantity_for_first - exp}"
+        elif exp < quantity_for_second:
+            return f"У вас нет призов. Кол-во баллов до следующей награды: {quantity_for_second - exp}"
+        elif exp < quantity_for_third:
+            return f"У вас нет призов. Кол-во баллов до следующей награды: {quantity_for_third - exp}"
 
 
 def get_info_of_workers():
