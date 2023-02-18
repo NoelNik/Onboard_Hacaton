@@ -45,7 +45,7 @@ def menu(message):
         item3 = types.KeyboardButton('Связь с HR')
         item4 = types.KeyboardButton('Показать задания')
         item5 = types.KeyboardButton('Нормативные документы')
-        item6 = types.KeyboardButton('Таблица лидеров')
+        item6 = types.KeyboardButton('Получить приз')
         item7 = types.KeyboardButton('/help')
 
     markup.add(item1, item2, item3, item4, item5, item6, item7)
@@ -83,7 +83,7 @@ def message_echo(message):
         item3 = types.KeyboardButton('Связь с HR')
         item4 = types.KeyboardButton('Показать задания')
         item5 = types.KeyboardButton('Нормативные документы')
-        item6 = types.KeyboardButton('Таблица лидеров')
+        item6 = types.KeyboardButton('Получить приз')
         markup.add(item1, item2, item3, item4, item5, item6)
         if DB.if_user_admin(DB.getIDinterlocutor(message.chat.id)):
             markup.add(types.KeyboardButton('/menu_for_admin'))
@@ -133,6 +133,7 @@ def message_echo(message):
         bot_msg = bot.send_message(message.chat.id, "Какой документ вас интересует?", reply_markup=markup)
         bot.register_next_step_handler(bot_msg, get_documents)
     
+    # TODO: дописать призы
     elif message.text == "Таблица лидеров":
         pass
 
