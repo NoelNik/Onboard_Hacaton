@@ -83,7 +83,7 @@ def message_echo(message):
                 bot.send_message(message.chat.id, "Вы подключились к диалогу!", reply_markup=markup)
                 bot.send_message(q[0][0], "Вы подключились к диалогу, задавайте вопросы!", reply_markup=markup)
 
-    if message.text == "Рассказать про нашу компанию":
+    elif message.text == "Рассказать про нашу компанию":
         bot.send_message(message.chat.id, "Перейди по ссылке за всей нужной информацией :)")
         bot.send_message(message.chat.id, "https://disk.yandex.ru/d/SO7F8r0xI3DAsg")
 
