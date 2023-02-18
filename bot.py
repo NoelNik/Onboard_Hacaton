@@ -142,7 +142,7 @@ def get_documents(message):
         "– cовместители, если у них отпуск на основной работе."
         bot.send_message(message.chat.id, unplanned)
         days_left = DB.check_for_data(message.chat.id)
-        planned = f"Вы можете выйти в отпуск {'через', days_left, 'дней' if days_left > 0 else 'уже сейчас!'}"
+        planned = f"Вы можете выйти в отпуск через {days_left} дней"
         bot.send_message(message.chat.id, planned)
 
     elif message.text == "Увольнение":
