@@ -130,4 +130,3 @@ def addTask(telegramID, newTask):
 # TODO: Подумать, как реализовать добавление очков
 def addPoints(telegramID):
     pass
-

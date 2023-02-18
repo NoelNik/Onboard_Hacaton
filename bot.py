@@ -6,7 +6,7 @@ from config import TOKEN, PASSWORD
 
 bot = telebot.TeleBot(TOKEN)
 
-
+bot.send_message(401104778, 'Ты кто')
 @bot.message_handler(commands=['admin'])
 def welcome(message):
     bot.send_message(message.chat.id, "Пожлалуйста, введите пароль: ")
@@ -21,7 +21,7 @@ def welcome(message):
     menu(message)
 
 
-# потом добавлю
+
 @bot.message_handler(commands=['help'])
 def help_me_pls(message):
     pass
@@ -60,7 +60,17 @@ def menu_for_admin(message):
 @bot.message_handler(content_types=['text'])
 def message_echo(message):
     if message.text == 'Остановить диалог':
-        bot.send_message(DB.getIDinterlocutor(message.chat.id), 'Диалог остановлен!')
+        markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
+        item1 = types.KeyboardButton('Рассказать про нашу компанию')
+        item2 = types.KeyboardButton('Показать свой профиль')
+        item3 = types.KeyboardButton('Связь с HR')
+        item4 = types.KeyboardButton('Показать задания')
+        item5 = types.KeyboardButton('Нормативные документы')
+        markup.add(item1, item2, item3, item4, item5)
+        if DB.if_user_admin(DB.getIDinterlocutor(message.chat.id)):
+            markup.add(types.KeyboardButton('/menu_for_admin'))
+        bot.send_message(DB.getIDinterlocutor(message.chat.id), 'Диалог остановлен!', reply_markup=markup)
+
         bot.send_message(message.chat.id, 'Диалог остановлен!')
         DB.deleteChatActive(message.chat.id)
         menu(message)
@@ -171,3 +181,4 @@ def complete_task(message):
 
 def start():
     bot.infinity_polling()
+
