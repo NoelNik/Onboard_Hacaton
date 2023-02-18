@@ -134,7 +134,7 @@ def message_echo(message):
         bot.register_next_step_handler(bot_msg, get_documents)
     
     # TODO: дописать призы
-    elif message.text == "Таблица лидеров":
+    elif message.text == "Получить приз":
         pass
 
 
