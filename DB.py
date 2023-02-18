@@ -55,10 +55,10 @@ def getCurrentDate():
 
 
 def check_for_data(telegramID):
-    data = datetime.datetime.strptime(getData(telegramID), "%Y-%m-%d").day
+    data = datetime.datetime.strptime(getData(telegramID), "%Y-%m-%d")
     current_date = datetime.datetime.today()
     # dif = current_date - data
-    dif = data - current_date
+    dif = 180 - (current_date - data).days
     return dif
     # возможно, это понадобится позже, но я пока что закомментирую это
     # if dif == 7:
