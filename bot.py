@@ -124,10 +124,16 @@ def message_echo(message):
     elif DB.if_user_admin(message.chat.id):
         if message.text == "Добавить задания":
             pass
+
         elif message.text == "Показать профиль работника":
-            pass
+            data = DB.get_info_of_workers()
+            for num, elem in enumerate(data, start=1):
+                bot.send_message(message.chat.id,
+                                 f"{num}. Дата прихода - {elem[0]}, кол-во баллов - {elem[1]}")
+
         elif message.text == "Удалить работника":
             pass
+
         elif message.text == "Открыть диолог со стажером":
             markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
             markup.add(types.KeyboardButton('Остановить диалог'))
@@ -170,7 +176,6 @@ def get_documents(message):
     else:
         bot.send_message(message.chat.id, "Извините, я вас не понял")
     menu(message)
-
 
 
 def chat_hr(message):
