@@ -6,7 +6,7 @@ from config import TOKEN, PASSWORD
 
 bot = telebot.TeleBot(TOKEN)
 
-bot.send_message(401104778, 'Ты кто')
+
 @bot.message_handler(commands=['admin'])
 def welcome(message):
     bot.send_message(message.chat.id, "Пожлалуйста, введите пароль: ")
@@ -21,7 +21,7 @@ def welcome(message):
     menu(message)
 
 
-
+# потом добавлю
 @bot.message_handler(commands=['help'])
 def help_me_pls(message):
     pass
@@ -60,17 +60,7 @@ def menu_for_admin(message):
 @bot.message_handler(content_types=['text'])
 def message_echo(message):
     if message.text == 'Остановить диалог':
-        markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
-        item1 = types.KeyboardButton('Рассказать про нашу компанию')
-        item2 = types.KeyboardButton('Показать свой профиль')
-        item3 = types.KeyboardButton('Связь с HR')
-        item4 = types.KeyboardButton('Показать задания')
-        item5 = types.KeyboardButton('Нормативные документы')
-        markup.add(item1, item2, item3, item4, item5)
-        if DB.if_user_admin(DB.getIDinterlocutor(message.chat.id)):
-            markup.add(types.KeyboardButton('/menu_for_admin'))
-        bot.send_message(DB.getIDinterlocutor(message.chat.id), 'Диалог остановлен!', reply_markup=markup)
-
+        bot.send_message(DB.getIDinterlocutor(message.chat.id), 'Диалог остановлен!')
         bot.send_message(message.chat.id, 'Диалог остановлен!')
         DB.deleteChatActive(message.chat.id)
         menu(message)
@@ -101,7 +91,9 @@ def message_echo(message):
     elif message.text == "Показать свой профиль":
         print(message.chat.id)
         bot.send_message(message.chat.id,
-                         f"{message.chat.first_name}, вот сколько у тебя баллов: {DB.getExp(message.chat.id)}")
+                         f"--  {DB.getCurrentDate()}  --\n" + \
+                         f"{message.chat.first_name}, вот сколько у тебя баллов: {DB.getExp(message.chat.id)}\n" + \
+                         f"Ваш ID: {message.chat.id}")
 
     elif message.text == "Связь с HR":
         chat_hr(message)
@@ -137,20 +129,17 @@ def message_echo(message):
         elif message.text == "Удалить работника":
             pass
         elif message.text == "Открыть диолог со стажером":
+            markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
+            markup.add(types.KeyboardButton('Остановить диалог'))
             q = DB.getQueue()
             if q:
-                markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
-                markup.add(types.KeyboardButton('Остановить диалог'))
                 DB.deleteQueue(q[0][0])
                 DB.appendChatActive(q[0][0], message.chat.id)
                 bot.send_message(message.chat.id, "Вы подключились к диалогу!", reply_markup=markup)
                 bot.send_message(q[0][0], "Вы подключились к диалогу, задавайте вопросы!", reply_markup=markup)
-            else:
-                bot.send_message(message.chat.id, "В очереди никого нет!")
-                menu_for_admin(message)
         else:
             bot.send_message(message.chat.id, "Я не понял вашу команду")
-            menu_for_admin(message)
+            menu(message)
     else:
         bot.send_message(message.chat.id, "Я не понял вашу команду")
         menu(message)
@@ -173,7 +162,7 @@ def get_documents(message):
         "– cовместители, если у них отпуск на основной работе."
         bot.send_message(message.chat.id, unplanned)
         days_left = DB.check_for_data(message.chat.id)
-        planned = f"Вы можете выйти в отпуск {'через', days_left, 'дней' if days_left > 0 else 'уже сейчас!'}"
+        planned = f"Вы можете выйти в отпуск через {days_left} дней"
         bot.send_message(message.chat.id, planned)
     elif "увол" in text:
         getAwayDoc = open('media/documents/Заяление об увольнении.docx', 'rb')
