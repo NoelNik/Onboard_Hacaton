@@ -120,7 +120,7 @@ def get_documents(message):
     elif message.text == "Как уйти в отпуск?":
         bot.send_message(message.chat.id, "тут будут доки для отпуска")
     elif message.text == "Увольнение":
-        getAwayDoc = open('media/documents/potom_pomenyaem.docx', 'rb')
+        getAwayDoc = open('media/documents/Заявление об увольнении.docx', 'rb')
         bot.send_document(message.chat.id, getAwayDoc, caption="В таком случае, заполните это заявление")
     else:
         bot.send_message(message.chat.id, "Извините, я вас не понял")
