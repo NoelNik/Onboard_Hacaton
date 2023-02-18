@@ -128,9 +128,22 @@ def message_echo(message):
 
 def get_documents(message):
     if message.text == "Для устройства на работу":
-        bot.send_message(message.chat.id, "тут будут доки для устройства на работу, когда Никита их допишет")
+        msg = "Вам потребуется:\n" + \
+        "– паспорт c регистрацией или иной документ, удостоверяющий личность;\n" + \
+        "– документ об образовании и (или) о квалификации или наличии специальных знаний\n" + \
+        "– справку о наличии (отсутствии) судимости\n" + \
+        "– трудовая книжка (при наличии)."
+        bot.send_message(message.chat.id, msg)
     elif message.text == "Как уйти в отпуск?":
-        bot.send_message(message.chat.id, "тут будут доки для отпуска")
+        unplanned = "Вы можете уйти в незапланированный отпуск, если вы принадлежите одной из следующих групп:\n" + \
+        "– женщины — до декрета и после него. И их мужья;\n" + \
+        "– работники до 18 лет;\n" + \
+        "– усыновители детей до трех месяцев;\n" + \
+        "– cовместители, если у них отпуск на основной работе."
+        bot.send_message(message.chat.id, unplanned)
+        days_left = DB.check_for_data(message.chat.id)
+        planned = f"Вы можете выйти в отпуск {'через', days_left, 'дней' if days_left > 0 else 'уже сейчас!'}"
+        bot.send_message(message.chat.id, planned)
     elif message.text == "Увольнение":
         getAwayDoc = open('media/documents/Заявление об увольнении.docx', 'rb')
         bot.send_document(message.chat.id, getAwayDoc, caption="В таком случае, заполните это заявление")
