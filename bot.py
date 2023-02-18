@@ -33,8 +33,9 @@ def menu(message):
     item2 = types.KeyboardButton('Показать свой профиль')
     item3 = types.KeyboardButton('Связь с HR')
     item4 = types.KeyboardButton('Показать задания')
+    item5 = types.KeyboardButton('Нормативные документы')
 
-    markup.add(item1, item2, item3, item4)
+    markup.add(item1, item2, item3, item4, item5)
     if DB.if_user_admin(message.chat.id):
         markup.add(types.KeyboardButton('/menu_for_admin'))
     bot.send_message(message.chat.id, f'С чего вы хотите начать, {message.chat.first_name}',
