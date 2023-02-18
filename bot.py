@@ -146,7 +146,7 @@ def get_documents(message):
         planned = f"Вы можете выйти в отпуск {'через', days_left, 'дней' if days_left > 0 else 'уже сейчас!'}"
         bot.send_message(message.chat.id, planned)
     elif message.text == "Увольнение":
-        getAwayDoc = open('media/documents/Заяление об увольнении.docx', 'rb')
+        getAwayDoc = open('media\documents\Заявление об увольнении.docx', 'rb')
         bot.send_document(message.chat.id, getAwayDoc, caption="В таком случае, заполните это заявление")
     else:
         bot.send_message(message.chat.id, "Извините, я вас не понял")
