@@ -14,7 +14,8 @@ def welcome(message):
     else:
         DB.newUser(message.chat.id)
         bot.send_message(message.chat.id, "Привет! Я буду твоим помошником для удобной адаптации к новой рабочей среде")
-        sti = open('media/stickers/sticker.webp', 'rb')
+        # id стикера сонечки "привет"
+        sti = "CAACAgIAAxkBAAIFvWPxO2FdGo8UfSj66TNhsQABzAPKDwACmycAAnPWiUs2VR7lGKIKCy4E"
         bot.send_sticker(message.chat.id, sti)
         menu(message)
 
@@ -133,7 +134,7 @@ def message_echo(message):
     
     # TODO: дописать призы
     elif message.text == "Получить приз":
-        pass
+        bot.send_message(message.chat.id, DB.check_for_win(message.chat.id))
 
     # админ панель
     elif DB.if_user_admin(message.chat.id):
