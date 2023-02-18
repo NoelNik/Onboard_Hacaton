@@ -73,7 +73,6 @@ def message_echo(message):
                 bot.send_message(message.chat.id, f"До сноса всей программы осталось: {11 - i}")
             bot.stop_bot()
 
-
     if message.text == "Рассказать про нашу компанию":
         bot.send_message(message.chat.id, "Перейди по ссылке за всей нужной информацией :)")
         bot.send_message(message.chat.id, "https://disk.yandex.ru/d/SO7F8r0xI3DAsg")
@@ -106,7 +105,6 @@ def message_echo(message):
         markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
         markup.add(item1, item2)
         bot.send_message(message.chat.id, "Я не понял вашу команду", reply_markup=markup)
-
 
 
 def chat_hr(message):
