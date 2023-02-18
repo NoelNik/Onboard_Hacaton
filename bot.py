@@ -74,7 +74,9 @@ def message_echo(message):
     elif message.text == "Показать свой профиль":
         print(message.chat.id)
         bot.send_message(message.chat.id,
-                         f"{message.chat.first_name}, вот сколько у тебя баллов: {DB.getExp(message.chat.id)}")
+                         f"--  {DB.getCurrentDate()}  --\n" + \
+                         f"{message.chat.first_name}, вот сколько у тебя баллов: {DB.getExp(message.chat.id)}\n" + \
+                         f"Ваш ID: {message.chat.id}")
 
     elif message.text == "Связь с HR":
         chat_hr(message)

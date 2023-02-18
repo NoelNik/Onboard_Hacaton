@@ -46,8 +46,11 @@ def check_for_win(telegramID):
         return None
 
 
+def getCurrentDate():
+    return datetime.datetime.now().date()
+
 def check_for_data(telegramID):
-    data = datetime.datetime.strptime(getData(telegramID), "%Y-%m-%d").days
+    data = datetime.datetime.strptime(getData(telegramID), "%Y-%m-%d").day
     current_date = datetime.datetime.today()
     # dif = current_date - data
     dif = data - current_date
