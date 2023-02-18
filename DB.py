@@ -46,8 +46,13 @@ def check_for_win(telegramID):
         return None
 
 
+def get_info_of_workers():
+    return cur.execute(f"""SELECT * FROM interns""")
+
+
 def getCurrentDate():
     return datetime.datetime.now().date()
+
 
 def check_for_data(telegramID):
     data = datetime.datetime.strptime(getData(telegramID), "%Y-%m-%d")
