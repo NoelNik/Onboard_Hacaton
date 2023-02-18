@@ -1,5 +1,4 @@
 import telebot
-import time
 from telebot import types
 import DB
 from config import TOKEN, PASSWORD
@@ -128,14 +127,15 @@ def message_echo(message):
 
 
 def get_documents(message):
-    if message.text == "Для устройства на работу":
+    text = message.text.lower()
+    if ("устр" in text or "работ" in text):
         msg = "Вам потребуется:\n" + \
         "– паспорт c регистрацией или иной документ, удостоверяющий личность;\n" + \
         "– документ об образовании и (или) о квалификации или наличии специальных знаний\n" + \
         "– справку о наличии (отсутствии) судимости\n" + \
         "– трудовая книжка (при наличии)."
         bot.send_message(message.chat.id, msg)
-    elif message.text == "Как уйти в отпуск?":
+    elif "отпуск" in text:
         unplanned = "Вы можете уйти в незапланированный отпуск, если вы принадлежите одной из следующих групп:\n" + \
         "– женщины — до декрета и после него. И их мужья;\n" + \
         "– работники до 18 лет;\n" + \
@@ -145,13 +145,12 @@ def get_documents(message):
         days_left = DB.check_for_data(message.chat.id)
         planned = f"Вы можете выйти в отпуск {'через', days_left, 'дней' if days_left > 0 else 'уже сейчас!'}"
         bot.send_message(message.chat.id, planned)
-    elif message.text == "Увольнение":
+    elif "увол" in text:
         getAwayDoc = open('media/documents/Заяление об увольнении.docx', 'rb')
         bot.send_document(message.chat.id, getAwayDoc, caption="В таком случае, заполните это заявление")
     else:
         bot.send_message(message.chat.id, "Извините, я вас не понял")
     menu(message)
-
 
 
 def chat_hr(message):
