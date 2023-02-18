@@ -16,7 +16,7 @@ def welcome(message):
 def welcome(message):
     DB.newUser(message.chat.id)
     bot.send_message(message.chat.id, "Привет! Я буду твоим помошником для удобной адаптации к новой рабочей среде")
-    sti = open('stickers/sticker.webp', 'rb')
+    sti = open('media/stickers/sticker.webp', 'rb')
     bot.send_sticker(message.chat.id, sti)
     menu(message)
 
@@ -83,7 +83,7 @@ def message_echo(message):
                 bot.send_message(message.chat.id, "Вы подключились к диалогу!", reply_markup=markup)
                 bot.send_message(q[0][0], "Вы подключились к диалогу, задавайте вопросы!", reply_markup=markup)
 
-    if message.text == "Рассказать про нашу компанию":
+    elif message.text == "Рассказать про нашу компанию":
         bot.send_message(message.chat.id, "Перейди по ссылке за всей нужной информацией :)")
         bot.send_message(message.chat.id, "https://disk.yandex.ru/d/SO7F8r0xI3DAsg")
 
