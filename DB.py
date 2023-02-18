@@ -50,12 +50,14 @@ def check_for_data(telegramID):
     data = datetime.datetime.strptime(getData(telegramID), "%Y-%m-%d")
     current_date = datetime.datetime.now()
     dif = current_date - data
-    if dif == 7:
-        pass
-    elif dif == 14:
-        pass
-    elif dif == 30:
-        pass
+    return dif
+    # возможно, это понадобится позже, но я пока что закомментирую это
+    # if dif == 7:
+    #     pass
+    # elif dif == 14:
+    #     pass
+    # elif dif == 30:
+    #     pass
 
 
 def getData(telegramID):
