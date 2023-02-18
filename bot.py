@@ -7,8 +7,6 @@ from config import TOKEN, PASSWORD
 bot = telebot.TeleBot(TOKEN)
 
 
-
-
 @bot.message_handler(commands=['start'])
 def welcome(message):
     if (str(message.chat.id),) in DB.getQueue():
@@ -187,7 +185,11 @@ def get_documents(message):
                     "– cовместители, если у них отпуск на основной работе."
         bot.send_message(message.chat.id, unplanned)
         days_left = DB.check_for_data(message.chat.id)
-        planned = f"Вы можете выйти в отпуск {'через', days_left, 'дней' if days_left > 0 else 'уже сейчас!'}"
+        if days_left <= 0:
+            planned = f"Вы можете выйти в отпуск уже сейчас!"
+        else:
+            planned = f"Вы можете выйти в отпуск через, {days_left} дней"
+
         bot.send_message(message.chat.id, planned)
 
     elif message.text == "Увольнение":

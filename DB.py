@@ -30,18 +30,28 @@ def getExp(telegramID):
 
 
 def check_for_win(telegramID):
-    prize_list = {"first": ["Стикер"], "second": ["ручка"], "third": ["яхта"]}
+    prize_list = {"first": ["Стикер", "ручка"], "second": ["худи", "мышка"], "third": ["яхта", "машина"]}
     quantity_for_first = 15
     quantity_for_second = 30
     quantity_for_third = 45
     if getExp(telegramID) > quantity_for_first:
-        return prize_list["first"][randint(0, len(prize_list["first"]) - 1)]
+        ind = randint(0, len(prize_list["first"]) - 1)
+        prize = prize_list["first"][ind]
+        prize_list["first"].pop(ind)
+        return prize
 
     elif getExp(telegramID) > quantity_for_second:
-        return prize_list["second"][randint(0, len(prize_list["second"]) - 1)]
+        ind = randint(0, len(prize_list["second"]) - 1)
+        prize = prize_list["second"][ind]
+        prize_list["second"].pop(ind)
+        return prize
 
     elif getExp(telegramID) > quantity_for_third:
-        return prize_list["third"][randint(0, len(prize_list["third"]) - 1)]
+        ind = randint(0, len(prize_list["third"]) - 1)
+        prize = prize_list["third"][ind]
+        prize_list["third"].pop(ind)
+        return prize
+
     else:
         return None
 
@@ -60,13 +70,6 @@ def check_for_data(telegramID):
     # dif = current_date - data
     dif = 180 - (current_date - data).days
     return dif
-    # возможно, это понадобится позже, но я пока что закомментирую это
-    # if dif == 7:
-    #     pass
-    # elif dif == 14:
-    #     pass
-    # elif dif == 30:
-    #     pass
 
 
 def getData(telegramID):
@@ -99,8 +102,9 @@ def deleteChatActive(TelegramID):
     con.commit()
 
 
+# TODO: Вылетает ошибка при закрытие чата со стороны стажера.
 def isChatActive(TelegramID):
-    for s in cur.execute(f"""SELECT idIntern, idAdmin FROM activeChat""").fetchall():
+    for s in (cur.execute(f"""SELECT idIntern, idAdmin FROM activeChat""").fetchall()):
         if s[0] == str(TelegramID) or s[1] == str(TelegramID):
             return True
     return False
