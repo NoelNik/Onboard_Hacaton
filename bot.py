@@ -2,14 +2,14 @@ import telebot
 from telebot import types
 import DB
 from config import TOKEN
-from DB import if_user_exist, getExp, getData, getTask
+from DB import if_user_exist, getExp, getData, getTasks
 
 bot = telebot.TeleBot(TOKEN)
 
 
 @bot.message_handler(commands=['start'])
 def welcome(message):
-
+    DB.newUser(message.chat.id)
     bot.send_message(message.chat.id, "Привет! Я буду твоим помошником для удобной адаптации к новой рабочей среде")
     sti = open('stickers/sticker.webp', 'rb')
     bot.send_sticker(message.chat.id, sti)
