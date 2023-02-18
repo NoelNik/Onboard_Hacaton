@@ -1,11 +1,12 @@
 import telebot
+import time
 from telebot import types
 import DB
 from config import TOKEN, PASSWORD
 
 bot = telebot.TeleBot(TOKEN)
 
-
+bot.send_message(401104778, 'Ты кто')
 @bot.message_handler(commands=['admin'])
 def welcome(message):
     bot.send_message(message.chat.id, "Пожлалуйста, введите пароль: ")
@@ -19,7 +20,8 @@ def welcome(message):
     bot.send_sticker(message.chat.id, sti)
     menu(message)
 
-# потом добавлю
+
+
 @bot.message_handler(commands=['help'])
 def help_me_pls(message):
     pass
@@ -58,7 +60,17 @@ def menu_for_admin(message):
 @bot.message_handler(content_types=['text'])
 def message_echo(message):
     if message.text == 'Остановить диалог':
-        bot.send_message(DB.getIDinterlocutor(message.chat.id), 'Диалог остановлен!')
+        markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
+        item1 = types.KeyboardButton('Рассказать про нашу компанию')
+        item2 = types.KeyboardButton('Показать свой профиль')
+        item3 = types.KeyboardButton('Связь с HR')
+        item4 = types.KeyboardButton('Показать задания')
+        item5 = types.KeyboardButton('Нормативные документы')
+        markup.add(item1, item2, item3, item4, item5)
+        if DB.if_user_admin(DB.getIDinterlocutor(message.chat.id)):
+            markup.add(types.KeyboardButton('/menu_for_admin'))
+        bot.send_message(DB.getIDinterlocutor(message.chat.id), 'Диалог остановлен!', reply_markup=markup)
+
         bot.send_message(message.chat.id, 'Диалог остановлен!')
         DB.deleteChatActive(message.chat.id)
         menu(message)
@@ -89,7 +101,7 @@ def message_echo(message):
     elif message.text == "Показать свой профиль":
         print(message.chat.id)
         bot.send_message(message.chat.id,
-                            f"{message.chat.first_name}, вот сколько у тебя баллов: {DB.getExp(message.chat.id)}")
+                         f"{message.chat.first_name}, вот сколько у тебя баллов: {DB.getExp(message.chat.id)}")
 
     elif message.text == "Связь с HR":
         chat_hr(message)
@@ -117,13 +129,31 @@ def message_echo(message):
         markup.add(item1, item2, item3, item4)
         bot_msg = bot.send_message(message.chat.id, "Какой документ вас интересует?", reply_markup=markup)
         bot.register_next_step_handler(bot_msg, get_documents)
-
+    elif DB.if_user_admin(message.chat.id):
+        if message.text == "Добавить задания":
+            pass
+        elif message.text == "Показать профиль работника":
+            pass
+        elif message.text == "Удалить работника":
+            pass
+        elif message.text == "Открыть диолог со стажером":
+            q = DB.getQueue()
+            if q:
+                markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
+                markup.add(types.KeyboardButton('Остановить диалог'))
+                DB.deleteQueue(q[0][0])
+                DB.appendChatActive(q[0][0], message.chat.id)
+                bot.send_message(message.chat.id, "Вы подключились к диалогу!", reply_markup=markup)
+                bot.send_message(q[0][0], "Вы подключились к диалогу, задавайте вопросы!", reply_markup=markup)
+            else:
+                bot.send_message(message.chat.id, "В очереди никого нет!")
+                menu_for_admin(message)
+        else:
+            bot.send_message(message.chat.id, "Я не понял вашу команду")
+            menu_for_admin(message)
     else:
-        item1 = types.KeyboardButton('/start')
-        item2 = types.KeyboardButton('/help')
-        markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
-        markup.add(item1, item2)
-        bot.send_message(message.chat.id, "Я не понял вашу команду", reply_markup=markup)
+        bot.send_message(message.chat.id, "Я не понял вашу команду")
+        menu(message)
 
 
 def get_documents(message):
@@ -153,14 +183,16 @@ def get_documents(message):
     menu(message)
 
 
+
 def chat_hr(message):
     DB.appendQueue(message.chat.id)
+    for i in DB.getAdminList():
+        bot.send_message(int(i), f"Стажер встал в очередь! Сейчас в очереди {len(DB.getQueue())}")
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
     markup.add(types.KeyboardButton('Остановить поиск'))
     bot.send_message(message.chat.id, "Подождите, пока сотрудник не присоединиться к чату", reply_markup=markup)
 
 
-# TODO: придумать, как автоматизировать получение награды за выполнение задач!!!
 def complete_task(message):
     bot.send_message(message.chat.id, "Поздравляю, вы выполнили задание! Баллы добавлены в ваш профиль :)")
 
