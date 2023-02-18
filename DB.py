@@ -70,6 +70,8 @@ def if_user_admin(telegramID):
     admin_list = [x[0] for x in cur.execute(f"""SELECT TelegramID FROM admins""").fetchall()]
     return str(telegramID) in admin_list
 
+def getAdminList():
+    return [x[0] for x in cur.execute(f"""SELECT TelegramID FROM admins""").fetchall()]
 
 def appendQueue(telegramID):
     cur.execute(f"""INSERT INTO queue (TelegramID) VALUES ('{telegramID}')""")

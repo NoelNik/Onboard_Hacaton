@@ -20,6 +20,7 @@ def welcome(message):
     bot.send_sticker(message.chat.id, sti)
     menu(message)
 
+
 # потом добавлю
 @bot.message_handler(commands=['help'])
 def help_me_pls(message):
@@ -65,23 +66,6 @@ def message_echo(message):
         menu(message)
     elif DB.isChatActive(message.chat.id):
         bot.send_message(DB.getIDinterlocutor(message.chat.id), message.text)
-    elif DB.if_user_admin(message.chat.id):
-        # TODO: Дорасписать функции для админки
-        if message.text == "Добавить задания":
-            pass
-        elif message.text == "Показать профиль работника":
-            pass
-        elif message.text == "Удалить работника":
-            pass
-        elif message.text == "Открыть диолог со стажером":
-            markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
-            markup.add(types.KeyboardButton('Остановить диалог'))
-            q = DB.getQueue()
-            if q:
-                DB.deleteQueue(q[0][0])
-                DB.appendChatActive(q[0][0], message.chat.id)
-                bot.send_message(message.chat.id, "Вы подключились к диалогу!", reply_markup=markup)
-                bot.send_message(q[0][0], "Вы подключились к диалогу, задавайте вопросы!", reply_markup=markup)
 
     elif message.text == "Рассказать про нашу компанию":
         bot.send_message(message.chat.id, "Перейди по ссылке за всей нужной информацией :)")
@@ -90,7 +74,7 @@ def message_echo(message):
     elif message.text == "Показать свой профиль":
         print(message.chat.id)
         bot.send_message(message.chat.id,
-                            f"{message.chat.first_name}, вот сколько у тебя баллов: {DB.getExp(message.chat.id)}")
+                         f"{message.chat.first_name}, вот сколько у тебя баллов: {DB.getExp(message.chat.id)}")
 
     elif message.text == "Связь с HR":
         chat_hr(message)
@@ -118,13 +102,28 @@ def message_echo(message):
         markup.add(item1, item2, item3, item4)
         bot_msg = bot.send_message(message.chat.id, "Какой документ вас интересует?", reply_markup=markup)
         bot.register_next_step_handler(bot_msg, get_documents)
-
+    elif DB.if_user_admin(message.chat.id):
+        if message.text == "Добавить задания":
+            pass
+        elif message.text == "Показать профиль работника":
+            pass
+        elif message.text == "Удалить работника":
+            pass
+        elif message.text == "Открыть диолог со стажером":
+            markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
+            markup.add(types.KeyboardButton('Остановить диалог'))
+            q = DB.getQueue()
+            if q:
+                DB.deleteQueue(q[0][0])
+                DB.appendChatActive(q[0][0], message.chat.id)
+                bot.send_message(message.chat.id, "Вы подключились к диалогу!", reply_markup=markup)
+                bot.send_message(q[0][0], "Вы подключились к диалогу, задавайте вопросы!", reply_markup=markup)
+        else:
+            bot.send_message(message.chat.id, "Я не понял вашу команду")
+            menu(message)
     else:
-        item1 = types.KeyboardButton('/start')
-        item2 = types.KeyboardButton('/help')
-        markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
-        markup.add(item1, item2)
-        bot.send_message(message.chat.id, "Я не понял вашу команду", reply_markup=markup)
+        bot.send_message(message.chat.id, "Я не понял вашу команду")
+        menu(message)
 
 
 def get_documents(message):
@@ -133,22 +132,22 @@ def get_documents(message):
     elif message.text == "Как уйти в отпуск?":
         bot.send_message(message.chat.id, "тут будут доки для отпуска")
     elif message.text == "Увольнение":
-        getAwayDoc = open('media/documents/Заяление об увольнении.docx', 'rb')
+        getAwayDoc = open('media/documents/Заявление об увольнении.docx', 'rb')
         bot.send_document(message.chat.id, getAwayDoc, caption="В таком случае, заполните это заявление")
     else:
         bot.send_message(message.chat.id, "Извините, я вас не понял")
     menu(message)
 
 
-
 def chat_hr(message):
     DB.appendQueue(message.chat.id)
+    for i in DB.getAdminList():
+        bot.send_message(int(i), f"Стажер встал в очередь! Сейчас в очереди {len(DB.getQueue())}")
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
     markup.add(types.KeyboardButton('Остановить поиск'))
     bot.send_message(message.chat.id, "Подождите, пока сотрудник не присоединиться к чату", reply_markup=markup)
 
 
-# TODO: придумать, как автоматизировать получение награды за выполнение задач!!!
 def complete_task(message):
     bot.send_message(message.chat.id, "Поздравляю, вы выполнили задание! Баллы добавлены в ваш профиль :)")
 
