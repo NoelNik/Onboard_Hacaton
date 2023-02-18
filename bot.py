@@ -36,15 +36,16 @@ def menu(message):
 
 @bot.message_handler(commands=['menu_for_admin'])
 def menu_for_admin(message):
-    markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
-    item1 = types.KeyboardButton('Добавить задания')
-    item2 = types.KeyboardButton('Показать профиль работника')
-    item3 = types.KeyboardButton('рофлан')
-    item4 = types.KeyboardButton('Удалить работника')
+    if DB.if_user_admin(message.chat.id):
+        markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
+        item1 = types.KeyboardButton('Добавить задания')
+        item2 = types.KeyboardButton('Показать профиль работника')
+        item3 = types.KeyboardButton('рофлан')
+        item4 = types.KeyboardButton('Удалить работника')
 
-    markup.add(item1, item2, item3, item4)
-    bot.send_message(message.chat.id, f'С чего вы хотите начать, {message.chat.first_name}',
-                     reply_markup=markup)
+        markup.add(item1, item2, item3, item4)
+        bot.send_message(message.chat.id, f'С чего вы хотите начать, {message.chat.first_name}',
+                        reply_markup=markup)
 
 
 @bot.message_handler(content_types=['text'])
@@ -71,17 +72,14 @@ def message_echo(message):
             menu(message)
 
         elif message.text == "Показать задания":
-            a = DB.getTasks(message.chat.id)
-            if len(a) == 0:
+            tasks = DB.getTasks(message.chat.id)
+            if tasks:
+                mes = f"Вот список твоих заданий:\n"
+                for num, elem in enumerate(tasks, start=1):
+                    mes += f"{num}. {elem[1]}.  Кол-во баллов: {elem[2]},  дедлайн: {elem[3]}\n"
+                bot.send_message(message.chat.id, mes)
+            else:
                 bot.send_message(message.chat.id, "У тебя нет текущих заданий, поздравляю!")
-            bot.send_message(message.chat.id, f"Вот список твоих заданий: ")
-            mes = ""
-            k = 0
-            for elem in a:
-                print(elem)
-                k += 1
-                mes += f"{k}. {elem[1]}.  Кол-во баллов: {elem[2]},  дедлайн: {elem[3]}\n"
-            bot.send_message(message.chat.id, mes)
 
         else:
             item1 = types.KeyboardButton('/start')
