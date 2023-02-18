@@ -16,14 +16,9 @@ def welcome(message):
 def welcome(message):
     DB.newUser(message.chat.id)
     bot.send_message(message.chat.id, "Привет! Я буду твоим помошником для удобной адаптации к новой рабочей среде")
-    sti = open('stickers/sticker.webp', 'rb')
+    sti = open('media/stickers/sticker.webp', 'rb')
     bot.send_sticker(message.chat.id, sti)
     menu(message)
-
-# потом добавлю
-@bot.message_handler(commands=['help'])
-def help_me_pls(message):
-    pass
 
 
 @bot.message_handler(commands=['menu'])
@@ -33,8 +28,9 @@ def menu(message):
     item2 = types.KeyboardButton('Показать свой профиль')
     item3 = types.KeyboardButton('Связь с HR')
     item4 = types.KeyboardButton('Показать задания')
+    item5 = types.KeyboardButton('Нормативные документы')
 
-    markup.add(item1, item2, item3, item4)
+    markup.add(item1, item2, item3, item4, item5)
     bot.send_message(message.chat.id, f'С чего вы хотите начать, {message.chat.first_name}',
                      reply_markup=markup)
 
@@ -73,7 +69,7 @@ def message_echo(message):
                 bot.send_message(message.chat.id, f"До сноса всей программы осталось: {11 - i}")
             bot.stop_bot()
 
-
+    # user часть меню
     if message.text == "Рассказать про нашу компанию":
         bot.send_message(message.chat.id, "Перейди по ссылке за всей нужной информацией :)")
         bot.send_message(message.chat.id, "https://disk.yandex.ru/d/SO7F8r0xI3DAsg")
@@ -99,6 +95,16 @@ def message_echo(message):
             bot.send_message(message.chat.id, mes)
         else:
             bot.send_message(message.chat.id, "У тебя нет текущих заданий, поздравляю!")
+    
+    elif message.text == "Нормативные документы":
+        markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
+        item1 = types.KeyboardButton("Для устройства на работу")
+        item2 = types.KeyboardButton("Как уйти в отпуск?")
+        item3 = types.KeyboardButton("Увольнение")
+        markup.add(item1, item2, item3)
+        bot_msg = bot.send_message(message.chat.id, "Какой документ вас интересует?", reply_markup=markup)
+        bot.register_next_step_handler(bot_msg, get_documents)
+
 
     else:
         item1 = types.KeyboardButton('/start')
@@ -108,6 +114,17 @@ def message_echo(message):
         bot.send_message(message.chat.id, "Я не понял вашу команду", reply_markup=markup)
 
 
+def get_documents(message):
+    if message.text == "Для устройства на работу":
+        bot.send_message(message.chat.id, "тут будут доки для устройства на работу, когда Никита их допишет")
+    elif message.text == "Как уйти в отпуск?":
+        bot.send_message(message.chat.id, "тут будут доки для отпуска")
+    elif message.text == "Увольнение":
+        getAwayDoc = open('media/documents/potom_pomenyaem.docx', 'rb')
+        bot.send_document(message.chat.id, getAwayDoc, caption="В таком случае, заполните это заявление")
+    else:
+        bot.send_message(message.chat.id, "Извините, я вас не понял")
+    menu(message)
 
 def chat_hr(message):
     DB.appendQueue(message.chat.id)
