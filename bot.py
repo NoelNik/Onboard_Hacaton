@@ -20,6 +20,11 @@ def welcome(message):
     bot.send_sticker(message.chat.id, sti)
     menu(message)
 
+# потом добавлю
+@bot.message_handler(commands=['help'])
+def help_me_pls(message):
+    pass
+
 
 @bot.message_handler(commands=['menu'])
 def menu(message):
@@ -53,42 +58,7 @@ def message_echo(message):
     if message.text == PASSWORD:
         DB.newAdmin(message.chat.id)
         menu_for_admin(message)
-
-    if not (DB.if_user_admin(message.chat.id)):
-        if message.text == "Рассказать про нашу компанию":
-            bot.send_message(message.chat.id, "Перейди по ссылке за всей нужной информацией :)")
-            bot.send_message(message.chat.id, "https://disk.yandex.ru/d/SO7F8r0xI3DAsg")
-
-        elif message.text == "Показать свой профиль":
-            print(message.chat.id)
-            bot.send_message(message.chat.id,
-                             f"{message.chat.first_name}, вот сколько у тебя баллов: {DB.getExp(message.chat.id)}")
-
-        elif message.text == "Связь с HR":
-            chat_hr(message)
-
-        elif message.text == 'Остановить поиск':
-            DB.deleteQueue(message.chat.id)
-            menu(message)
-
-        elif message.text == "Показать задания":
-            tasks = DB.getTasks(message.chat.id)
-            if tasks:
-                mes = f"Вот список твоих заданий:\n"
-                for num, elem in enumerate(tasks, start=1):
-                    mes += f"{num}. {elem[1]}.  Кол-во баллов: {elem[2]},  дедлайн: {elem[3]}\n"
-                bot.send_message(message.chat.id, mes)
-            else:
-                bot.send_message(message.chat.id, "У тебя нет текущих заданий, поздравляю!")
-
-        else:
-            item1 = types.KeyboardButton('/start')
-            item2 = types.KeyboardButton('/help')
-            markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
-            markup.add(item1, item2)
-            bot.send_message(message.chat.id, "Я не понял вашу команду", reply_markup=markup)
-
-    else:
+    if DB.if_user_admin(message.chat.id):
         # TODO: Дорасписать функции для админки
         if message.text == "Добавить задания":
             pass
@@ -102,6 +72,41 @@ def message_echo(message):
                 time.sleep(1)
                 bot.send_message(message.chat.id, f"До сноса всей программы осталось: {11 - i}")
             bot.stop_bot()
+
+
+    if message.text == "Рассказать про нашу компанию":
+        bot.send_message(message.chat.id, "Перейди по ссылке за всей нужной информацией :)")
+        bot.send_message(message.chat.id, "https://disk.yandex.ru/d/SO7F8r0xI3DAsg")
+
+    elif message.text == "Показать свой профиль":
+        print(message.chat.id)
+        bot.send_message(message.chat.id,
+                            f"{message.chat.first_name}, вот сколько у тебя баллов: {DB.getExp(message.chat.id)}")
+
+    elif message.text == "Связь с HR":
+        chat_hr(message)
+
+    elif message.text == 'Остановить поиск':
+        DB.deleteQueue(message.chat.id)
+        menu(message)
+
+    elif message.text == "Показать задания":
+        tasks = DB.getTasks(message.chat.id)
+        if tasks:
+            mes = f"Вот список твоих заданий:\n"
+            for num, elem in enumerate(tasks, start=1):
+                mes += f"{num}. {elem[1]}.  Кол-во баллов: {elem[2]},  дедлайн: {elem[3]}\n"
+            bot.send_message(message.chat.id, mes)
+        else:
+            bot.send_message(message.chat.id, "У тебя нет текущих заданий, поздравляю!")
+
+    else:
+        item1 = types.KeyboardButton('/start')
+        item2 = types.KeyboardButton('/help')
+        markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
+        markup.add(item1, item2)
+        bot.send_message(message.chat.id, "Я не понял вашу команду", reply_markup=markup)
+
 
 
 def chat_hr(message):
