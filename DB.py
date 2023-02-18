@@ -60,10 +60,9 @@ def if_user_exist(telegramID):
     return bool(cur.execute(f"""SELECT TelegramID FROM interns WHERE TelegramID = '{telegramID}'""").fetchone())
 
 
-# TODO: Дописать проверку на то, является ли пользователь админом
 def if_user_admin(telegramID):
-    return False
-
+    admin_list = [int(x[0]) for x in cur.execute(f"""SELECT TelegramID FROM admins""").fetchall()]
+    return telegramID in admin_list
 
 def appendQueue(telegramID):
     cur.execute(f"""INSERT INTO queue (TelegramID) VALUES ('{telegramID}')""")
