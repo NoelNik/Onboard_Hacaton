@@ -45,12 +45,11 @@ def menu(message):
         item5 = types.KeyboardButton('Нормативные документы')
         item6 = types.KeyboardButton('Получить приз')
         item7 = types.KeyboardButton('/help')
-
-    markup.add(item1, item2, item3, item4, item5, item6, item7)
-    if DB.if_user_admin(message.chat.id):
-        markup.add(types.KeyboardButton('/menu_for_admin'))
-    bot.send_message(message.chat.id, f'С чего вы хотите начать, {message.chat.first_name}',
-                     reply_markup=markup)
+        markup.add(item1, item2, item3, item4, item5, item6, item7)
+        if DB.if_user_admin(message.chat.id):
+            markup.add(types.KeyboardButton('/menu_for_admin'))
+        bot.send_message(message.chat.id, f'С чего вы хотите начать, {message.chat.first_name}',
+                         reply_markup=markup)
 
 
 @bot.message_handler(commands=['menu_for_admin'])
@@ -72,7 +71,7 @@ def menu_for_admin(message):
             bot.send_message(message.chat.id, "Недостаточно прав!")
 
 
-@bot.message_handler(content_types=['text'])
+@bot.message_handler(content_types=['text', 'photo', 'sticker'])
 def message_echo(message):
     if message.text == 'Остановить диалог':
         markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
@@ -90,15 +89,19 @@ def message_echo(message):
         bot.send_message(message.chat.id, 'Диалог остановлен!')
         DB.deleteChatActive(message.chat.id)
         menu(message)
-    elif DB.isChatActive(message.chat.id):
-        bot.send_message(DB.getIDinterlocutor(message.chat.id), message.text)
+    elif DB.isChatActive(message.chat.id): # отправка сообщений собеседнику
+        if message.photo:
+            bot.send_photo(DB.getIDinterlocutor(message.chat.id), message.photo[0].file_id, message.caption)
+        elif message.sticker:
+            bot.send_sticker(DB.getIDinterlocutor(message.chat.id), message.sticker.file_id)
+        else:
+            bot.send_message(DB.getIDinterlocutor(message.chat.id), message.text)
 
     elif message.text == "Рассказать про нашу компанию":
         bot.send_message(message.chat.id, "Перейди по ссылке за всей нужной информацией :)")
         bot.send_message(message.chat.id, "https://disk.yandex.ru/d/SO7F8r0xI3DAsg")
 
     elif message.text == "Показать свой профиль":
-        print(message.chat.id)
         bot.send_message(message.chat.id,
                          f"--  {DB.getCurrentDate()}  --\n" + \
                          f"{message.chat.first_name}, вот сколько у тебя баллов: {DB.getExp(message.chat.id)}\n" + \
