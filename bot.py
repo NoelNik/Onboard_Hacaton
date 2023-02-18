@@ -21,10 +21,13 @@ def welcome(message):
     menu(message)
 
 
-# потом добавлю
 @bot.message_handler(commands=['help'])
 def help_me_pls(message):
-    pass
+    msg = "Я бот, который поможет тебе с адаптацией на новом рабочем месте. " + \
+    "Напиши мне /menu, чтобы отрыть меню, в котором ты сможешь получить дополнительную инофрмацию о компании, " + \
+    "посмотреть свой профиль, посмотреть свои задания или связаться с HR при необходимости, " + \
+    "а также посмотреть нормативные документы. И всё это в любое время"
+    bot.send_message(message.chat.id, msg)
 
 
 @bot.message_handler(commands=['menu'])
@@ -35,8 +38,9 @@ def menu(message):
     item3 = types.KeyboardButton('Связь с HR')
     item4 = types.KeyboardButton('Показать задания')
     item5 = types.KeyboardButton('Нормативные документы')
+    item6 = types.KeyboardButton('/help')
 
-    markup.add(item1, item2, item3, item4, item5)
+    markup.add(item1, item2, item3, item4, item5, item6)
     if DB.if_user_admin(message.chat.id):
         markup.add(types.KeyboardButton('/menu_for_admin'))
     bot.send_message(message.chat.id, f'С чего вы хотите начать, {message.chat.first_name}',
