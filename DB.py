@@ -13,6 +13,14 @@ def newUser(telegramID):
         con.commit()
 
 
+# Проверить
+def newAdmin(telegramID):
+    if not cur.execute(f"""SELECT TelegramID FROM Admins WHERE TelegramID = '{telegramID}'""").fetchone():
+        cur.execute(f"""INSERT INTO Admins (Name, TelegramID) VALUES 
+            ('{telegramID}', '{telegramID}')""")
+        con.commit()
+
+
 def deleteUser(telegramID):
     cur.execute(f"""DELETE FROM interns WHERE TelegramID = '{telegramID}'""")
     con.commit()
@@ -23,18 +31,25 @@ def getExp(telegramID):
 
 
 def check_for_win(telegramID):
-    prize_list = {"first": [], "second": [], "third": []}
+    prize_list = {"first": ["Стикер"], "second": ["ручка"], "third": ["яхта"]}
     quantity_for_first = 15
     quantity_for_second = 30
     quantity_for_third = 45
     if getExp(telegramID) > quantity_for_first:
-        return prize_list["first"][randint(0, len(prize_list["first"]))]
+        return prize_list["first"][randint(0, len(prize_list["first"]) - 1)]
 
     elif getExp(telegramID) > quantity_for_second:
-        return prize_list["second"][randint(0, len(prize_list["second"]))]
+        return prize_list["second"][randint(0, len(prize_list["second"]) - 1)]
 
     elif getExp(telegramID) > quantity_for_third:
-        return prize_list["third"][randint(0, len(prize_list["third"]))]
+        return prize_list["third"][randint(0, len(prize_list["third"]) - 1)]
+    else:
+        return None
+
+
+def check_for_data(telegramID):
+    # Уточнить, нужно ли расписывать метод получения призов за первую неделю работы.
+    pass
 
 
 def getData(telegramID):
@@ -43,6 +58,12 @@ def getData(telegramID):
 
 def if_user_exist(telegramID):
     return bool(cur.execute(f"""SELECT TelegramID FROM interns WHERE TelegramID = '{telegramID}'""").fetchone())
+
+
+# TODO: Дописать проверку на то, является ли пользователь админом
+def if_user_admin(telegramID):
+    return False
+
 
 def appendQueue(telegramID):
     cur.execute(f"""INSERT INTO queue (TelegramID) VALUES ('{telegramID}')""")
@@ -53,16 +74,22 @@ def appendChatActive(intern, Admin):
     cur.execute(f"""INSERT INTO activeChat (idIntern, idAdmin) VALUES ('{intern}', '{Admin}')""")
     con.commit()
 
+
 def deleteQueue(telegramID):
     cur.execute(f"""DELETE FROM queue WHERE TelegramID = '{telegramID}'""")
     con.commit()
 
 
-def getTasks():
-    return cur.execute(f"""SELECT * FROM tasks""").fetchall()
+def getTasks(telegramID):
+    return cur.execute(f"""SELECT * FROM tasks WHERE id = {telegramID}""").fetchall()
 
 
 def addTask(telegramID, newTask):
     cur.execute(f"""UPDATE interns set task = '{newTask}' WHERE TelegramID = '{telegramID}'""")
     con.commit()
     return "Задание обновлено"
+
+
+# TODO: Подумать, как реализовать добавление очков
+def addPoints(telegramID):
+    pass
