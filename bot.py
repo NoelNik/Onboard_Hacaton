@@ -37,7 +37,7 @@ def menu(message):
     if (str(message.chat.id),) in DB.getQueue():
         bot.send_message(message.chat.id, "Вы в очереди! Нажмите на кнопку остановить поиск.")
     else:
-        markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
+        markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=3)
         item1 = types.KeyboardButton('Рассказать про нашу компанию')
         item2 = types.KeyboardButton('Показать свой профиль')
         item3 = types.KeyboardButton('Связь с HR')
@@ -48,7 +48,7 @@ def menu(message):
         markup.add(item1, item2, item3, item4, item5, item6, item7)
         if DB.if_user_admin(message.chat.id):
             markup.add(types.KeyboardButton('/menu_for_admin'))
-        bot.send_message(message.chat.id, f'С чего вы хотите начать, {message.chat.first_name}',
+        bot.send_message(message.chat.id, f'С чем вам почочь, {message.chat.first_name}?',
                          reply_markup=markup)
 
 
@@ -58,13 +58,14 @@ def menu_for_admin(message):
         bot.send_message(message.chat.id, "Вы в очереди! Нажмите на кнопку остановить поиск.")
     else:
         if DB.if_user_admin(message.chat.id):
-            markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
+            markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=3)
             item1 = types.KeyboardButton('Добавить задания')
             item2 = types.KeyboardButton('Показать профиль работника')
             item3 = types.KeyboardButton('Открыть диалог со стажером')
             item4 = types.KeyboardButton('Удалить работника')
-            markup.add(item1, item2, item3, item4)
-            bot.send_message(message.chat.id, f'С чего вы хотите начать, {message.chat.first_name}?',
+            item5 = types.KeyboardButton('/menu')
+            markup.add(item1, item2, item3, item4, item5)
+            bot.send_message(message.chat.id, f'С чем вам помочь, {message.chat.first_name}?',
                              reply_markup=markup)
         else:
             bot.send_message(message.chat.id, "Недостаточно прав!")
@@ -123,7 +124,7 @@ def message_echo(message):
             bot.send_message(message.chat.id, "У тебя нет текущих заданий, поздравляю!")
 
     elif message.text == "Нормативные документы":
-        markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
+        markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=3)
         item1 = types.KeyboardButton("Для устройства на работу")
         item2 = types.KeyboardButton("Как уйти в отпуск?")
         item3 = types.KeyboardButton("Увольнение")
@@ -131,6 +132,9 @@ def message_echo(message):
         markup.add(item1, item2, item3, item4)
         bot_msg = bot.send_message(message.chat.id, "Какой документ вас интересует?", reply_markup=markup)
         bot.register_next_step_handler(bot_msg, get_documents)
+
+    elif message.text == "/menu":
+        pass
 
     elif message.text == "Получить приз":
         bot.send_message(message.chat.id, DB.check_for_win(message.chat.id))
@@ -153,7 +157,7 @@ def message_echo(message):
         elif message.text == "Открыть диалог со стажером":
             q = DB.getQueue()
             if q:
-                markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
+                markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=3)
                 markup.add(types.KeyboardButton('Остановить диалог'))
                 DB.deleteQueue(q[0][0])
                 DB.appendChatActive(q[0][0], message.chat.id)
@@ -212,7 +216,7 @@ def chat_hr(message):
     DB.appendQueue(message.chat.id)
     for i in DB.getAdminList():
         bot.send_message(int(i), f"Стажер встал в очередь! Сейчас в очереди {len(DB.getQueue())}")
-    markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
+    markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=3)
     markup.add(types.KeyboardButton('Остановить поиск'))
     bot.send_message(message.chat.id, "Подождите, пока сотрудник не присоединиться к чату", reply_markup=markup)
 
