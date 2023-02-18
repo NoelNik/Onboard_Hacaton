@@ -6,7 +6,8 @@ from config import TOKEN, PASSWORD
 
 bot = telebot.TeleBot(TOKEN)
 
-bot.send_message(401104778, 'Ты кто')
+
+
 @bot.message_handler(commands=['admin'])
 def welcome(message):
     bot.send_message(message.chat.id, "Пожлалуйста, введите пароль: ")
@@ -19,7 +20,6 @@ def welcome(message):
     sti = open('media/stickers/sticker.webp', 'rb')
     bot.send_sticker(message.chat.id, sti)
     menu(message)
-
 
 
 @bot.message_handler(commands=['help'])
@@ -132,11 +132,17 @@ def message_echo(message):
                 bot.send_message(message.chat.id, "В очереди никого нет!")
                 menu_for_admin(message)
         else:
-            bot.send_message(message.chat.id, "Я не понял вашу команду")
-            menu_for_admin(message)
+            if (str(message.chat.id),) in DB.getQueue():
+                bot.send_message(message.chat.id, "Вы в очереди! Нажмите на кнопку остановить поиск.")
+            else:
+                bot.send_message(message.chat.id, "Я не понял вашу команду")
+                menu_for_admin(message)
     else:
-        bot.send_message(message.chat.id, "Я не понял вашу команду")
-        menu(message)
+        if (str(message.chat.id),) in DB.getQueue():
+            bot.send_message(message.chat.id, "Вы в очереди! Нажмите на кнопку остановить поиск.")
+        else:
+            bot.send_message(message.chat.id, "Я не понял вашу команду")
+            menu(message)
 
 
 def get_documents(message):
@@ -181,4 +187,3 @@ def complete_task(message):
 
 def start():
     bot.infinity_polling()
-
