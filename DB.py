@@ -23,6 +23,7 @@ def newAdmin(telegramID):
 def deleteUser(telegramID):
     cur.execute(f"""DELETE FROM interns WHERE TelegramID = '{telegramID}'""")
     con.commit()
+        
 
 
 def getExp(telegramID):
@@ -104,7 +105,8 @@ def deleteChatActive(TelegramID):
 
 # TODO: Вылетает ошибка при закрытие чата со стороны стажера.
 def isChatActive(TelegramID):
-    for s in (cur.execute(f"""SELECT idIntern, idAdmin FROM activeChat""").fetchall()):
+    data = cur.execute(f"""SELECT idIntern, idAdmin FROM activeChat""").fetchall()
+    for s in data:
         if s[0] == str(TelegramID) or s[1] == str(TelegramID):
             return True
     return False
