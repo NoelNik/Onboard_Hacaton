@@ -22,6 +22,7 @@ def welcome(message):
     menu(message)
 
 
+
 @bot.message_handler(commands=['help'])
 def help_me_pls(message):
     pass
@@ -84,7 +85,9 @@ def message_echo(message):
     elif message.text == "Показать свой профиль":
         print(message.chat.id)
         bot.send_message(message.chat.id,
-                         f"{message.chat.first_name}, вот сколько у тебя баллов: {DB.getExp(message.chat.id)}")
+                         f"--  {DB.getCurrentDate()}  --\n" + \
+                         f"{message.chat.first_name}, вот сколько у тебя баллов: {DB.getExp(message.chat.id)}\n" + \
+                         f"Ваш ID: {message.chat.id}")
 
     elif message.text == "Связь с HR":
         chat_hr(message)
@@ -132,17 +135,11 @@ def message_echo(message):
                 bot.send_message(message.chat.id, "В очереди никого нет!")
                 menu_for_admin(message)
         else:
-            if (str(message.chat.id),) in DB.getQueue():
-                bot.send_message(message.chat.id, "Вы в очереди! Нажмите на кнопку остановить поиск.")
-            else:
-                bot.send_message(message.chat.id, "Я не понял вашу команду")
-                menu_for_admin(message)
-    else:
-        if (str(message.chat.id),) in DB.getQueue():
-            bot.send_message(message.chat.id, "Вы в очереди! Нажмите на кнопку остановить поиск.")
-        else:
             bot.send_message(message.chat.id, "Я не понял вашу команду")
-            menu(message)
+            menu_for_admin(message)
+    else:
+        bot.send_message(message.chat.id, "Я не понял вашу команду")
+        menu(message)
 
 
 def get_documents(message):
@@ -187,3 +184,4 @@ def complete_task(message):
 
 def start():
     bot.infinity_polling()
+

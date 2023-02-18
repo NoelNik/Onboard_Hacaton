@@ -46,10 +46,14 @@ def check_for_win(telegramID):
         return None
 
 
+def getCurrentDate():
+    return datetime.datetime.now().date()
+
 def check_for_data(telegramID):
     data = datetime.datetime.strptime(getData(telegramID), "%Y-%m-%d")
-    current_date = datetime.datetime.now()
-    dif = current_date - data
+    current_date = datetime.datetime.today()
+    # dif = current_date - data
+    dif = 180 - (current_date - data).days
     return dif
     # возможно, это понадобится позже, но я пока что закомментирую это
     # if dif == 7:
@@ -130,3 +134,4 @@ def addTask(telegramID, newTask):
 # TODO: Подумать, как реализовать добавление очков
 def addPoints(telegramID):
     pass
+
