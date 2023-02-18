@@ -21,8 +21,13 @@ def newAdmin(telegramID):
 
 
 def deleteUser(telegramID):
-    cur.execute(f"""DELETE FROM interns WHERE TelegramID = '{telegramID}'""")
-    con.commit()
+    if getData(telegramID):
+        cur.execute(f"""DELETE FROM interns WHERE TelegramID = '{telegramID}'""")
+        con.commit()
+        return "Пользователь успешно удалён"
+    else:
+        return "Такого пользователя не существует"
+        
 
 
 def getExp(telegramID):
