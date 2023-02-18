@@ -60,7 +60,7 @@ def menu_for_admin(message):
             markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
             item1 = types.KeyboardButton('Добавить задания')
             item2 = types.KeyboardButton('Показать профиль работника')
-            item3 = types.KeyboardButton('Открыть диолог со стажером')
+            item3 = types.KeyboardButton('Открыть диалог со стажером')
             item4 = types.KeyboardButton('Удалить работника')
             markup.add(item1, item2, item3, item4)
             bot.send_message(message.chat.id, f'С чего вы хотите начать, {message.chat.first_name}?',
@@ -151,7 +151,7 @@ def message_echo(message):
             bot.register_next_step_handler(bot_msg, deleteIntern)
             pass
 
-        elif message.text == "Открыть диолог со стажером":
+        elif message.text == "Открыть диалог со стажером":
             q = DB.getQueue()
             if q:
                 markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
