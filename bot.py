@@ -110,17 +110,20 @@ def message_echo(message):
         elif message.text == "Удалить работника":
             pass
         elif message.text == "Открыть диолог со стажером":
-            markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
-            markup.add(types.KeyboardButton('Остановить диалог'))
             q = DB.getQueue()
             if q:
+                markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
+                markup.add(types.KeyboardButton('Остановить диалог'))
                 DB.deleteQueue(q[0][0])
                 DB.appendChatActive(q[0][0], message.chat.id)
                 bot.send_message(message.chat.id, "Вы подключились к диалогу!", reply_markup=markup)
                 bot.send_message(q[0][0], "Вы подключились к диалогу, задавайте вопросы!", reply_markup=markup)
+            else:
+                bot.send_message(message.chat.id, "В очереди никого нет!")
+                menu_for_admin(message)
         else:
             bot.send_message(message.chat.id, "Я не понял вашу команду")
-            menu(message)
+            menu_for_admin(message)
     else:
         bot.send_message(message.chat.id, "Я не понял вашу команду")
         menu(message)
