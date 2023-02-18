@@ -23,7 +23,6 @@ def newAdmin(telegramID):
 def deleteUser(telegramID):
     cur.execute(f"""DELETE FROM interns WHERE TelegramID = '{telegramID}'""")
     con.commit()
-        
 
 
 def getExp(telegramID):
@@ -66,6 +65,8 @@ def check_for_win(telegramID):
         elif exp < quantity_for_third:
             return f"У вас нет призов. Кол-во баллов до следующей награды: {quantity_for_third - exp}"
 
+    con.commit()
+
 
 def get_info_of_workers():
     return cur.execute(f"""SELECT * FROM interns""")
@@ -78,9 +79,17 @@ def getCurrentDate():
 def check_for_data(telegramID):
     data = datetime.datetime.strptime(getData(telegramID), "%Y-%m-%d")
     current_date = datetime.datetime.today()
-    # dif = current_date - data
     dif = 180 - (current_date - data).days
     return dif
+
+
+def check_for_notifications(telegramID):
+    dif = check_for_data(telegramID)
+    if dif >= 7:
+        cur.execute(f"""UPDATE interns set readyToMeeteng = '{1}' WHERE TelegramID = '{telegramID}'""")
+    elif dif >= 14:
+        cur.execute(f"""UPDATE interns set readyToMeeteng = '{1}' WHERE TelegramID = '{telegramID}'""")
+    con.commit()
 
 
 def getData(telegramID):
@@ -95,8 +104,10 @@ def if_user_admin(telegramID):
     admin_list = [x[0] for x in cur.execute(f"""SELECT TelegramID FROM admins""").fetchall()]
     return str(telegramID) in admin_list
 
+
 def getAdminList():
     return [x[0] for x in cur.execute(f"""SELECT TelegramID FROM admins""").fetchall()]
+
 
 def appendQueue(telegramID):
     cur.execute(f"""INSERT INTO queue (TelegramID) VALUES ('{telegramID}')""")
@@ -152,7 +163,5 @@ def addTask(telegramID, newTask):
     return "Задание обновлено"
 
 
-# TODO: Подумать, как реализовать добавление очков
-def addPoints(telegramID):
-    pass
-
+def addPoints(telegramID, quantity):
+    cur.execute(f"""UPDATE interns set exp = '{getExp(telegramID) + quantity}' WHERE TelegramID = '{telegramID}'""")

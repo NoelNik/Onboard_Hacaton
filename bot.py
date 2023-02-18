@@ -144,7 +144,7 @@ def message_echo(message):
             data = DB.get_info_of_workers()
             for num, elem in enumerate(data, start=1):
                 bot.send_message(message.chat.id,
-                                 f"{num}. Дата прихода - {elem[0]}, кол-во баллов - {elem[2]}")
+                                 f"{num}. Дата прихода - {elem[0]}, кол-во баллов - {elem[2]}, готовность к встрече: {elem[3]}")
 
         elif message.text == "Удалить работника":
             bot_msg = bot.send_message(message.chat.id, "Введите ID работника, которого желаете удалить")
