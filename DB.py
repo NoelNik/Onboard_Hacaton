@@ -67,8 +67,8 @@ def if_user_exist(telegramID):
 
 
 def if_user_admin(telegramID):
-    admin_list = [int(x[0]) for x in cur.execute(f"""SELECT TelegramID FROM admins""").fetchall()]
-    return telegramID in admin_list
+    admin_list = [x[0] for x in cur.execute(f"""SELECT TelegramID FROM admins""").fetchall()]
+    return str(telegramID) in admin_list
 
 
 def appendQueue(telegramID):
@@ -81,9 +81,36 @@ def appendChatActive(intern, Admin):
     con.commit()
 
 
+def deleteChatActive(TelegramID):
+    cur.execute(f"""DELETE FROM activeChat WHERE idIntern = {TelegramID} OR idAdmin = {TelegramID}""")
+    con.commit()
+
+
+def isChatActive(TelegramID):
+    for s in cur.execute(f"""SELECT idIntern, idAdmin FROM activeChat""").fetchall():
+        if s[0] == str(TelegramID) or s[1] == str(TelegramID):
+            return True
+    return False
+
+
+def getIDinterlocutor(telegramID):
+    chat = cur.execute(
+        f"""SELECT idIntern, idAdmin FROM activeCHAT WHERE idIntern = '{telegramID}' or idAdmin ='{telegramID}'""").fetchone()
+    if chat:
+        if str(telegramID) == chat[0]:
+            return int(chat[1])
+        else:
+            return int(chat[0])
+    return telegramID
+
+
 def deleteQueue(telegramID):
     cur.execute(f"""DELETE FROM queue WHERE TelegramID = '{telegramID}'""")
     con.commit()
+
+
+def getQueue():
+    return cur.execute(f"""SELECT TelegramID FROM queue""").fetchall()
 
 
 def getTasks(telegramID):
@@ -99,3 +126,4 @@ def addTask(telegramID, newTask):
 # TODO: Подумать, как реализовать добавление очков
 def addPoints(telegramID):
     pass
+
