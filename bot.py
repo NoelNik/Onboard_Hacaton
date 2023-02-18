@@ -223,7 +223,11 @@ def complete_task(message):
 
 
 def deleteIntern(message):
-    bot.send_message(message.chat.id, DB.deleteUser(message.text))
+    # белембо, тут ошибка. плиз помогите :(
+    if DB.getData(message.chat.id):
+        bot.send_message(message.chat.id, DB.deleteUser(message.text))
+    else:
+        bot.send_message(message.chat.id, "Такого пользователя не существует")
     menu_for_admin(message)
 
 def start():
