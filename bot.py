@@ -101,7 +101,8 @@ def message_echo(message):
         item1 = types.KeyboardButton("Для устройства на работу")
         item2 = types.KeyboardButton("Как уйти в отпуск?")
         item3 = types.KeyboardButton("Увольнение")
-        markup.add(item1, item2, item3)
+        item4 = types.KeyboardButton("/menu")
+        markup.add(item1, item2, item3, item4)
         bot_msg = bot.send_message(message.chat.id, "Какой документ вас интересует?", reply_markup=markup)
         bot.register_next_step_handler(bot_msg, get_documents)
 
@@ -122,8 +123,6 @@ def get_documents(message):
     elif message.text == "Увольнение":
         getAwayDoc = open('media/documents/Заявление об увольнении.docx', 'rb')
         bot.send_document(message.chat.id, getAwayDoc, caption="В таком случае, заполните это заявление")
-    else:
-        bot.send_message(message.chat.id, "Извините, я вас не понял")
     menu(message)
 
 
