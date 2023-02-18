@@ -131,8 +131,7 @@ def message_echo(message):
         markup.add(item1, item2, item3, item4)
         bot_msg = bot.send_message(message.chat.id, "Какой документ вас интересует?", reply_markup=markup)
         bot.register_next_step_handler(bot_msg, get_documents)
-    
-    # TODO: дописать призы
+
     elif message.text == "Получить приз":
         bot.send_message(message.chat.id, DB.check_for_win(message.chat.id))
 
@@ -150,7 +149,6 @@ def message_echo(message):
         elif message.text == "Удалить работника":
             bot_msg = bot.send_message(message.chat.id, "Введите ID работника, которого желаете удалить")
             bot.register_next_step_handler(bot_msg, deleteIntern)
-            pass
 
         elif message.text == "Открыть диалог со стажером":
             q = DB.getQueue()
@@ -224,8 +222,7 @@ def complete_task(message):
 
 
 def deleteIntern(message):
-    # белембо, тут ошибка. плиз помогите :(
-    if DB.getData(message.chat.id):
+    if DB.getData(message.text):
         bot.send_message(message.chat.id, DB.deleteUser(message.text))
     else:
         bot.send_message(message.chat.id, "Такого пользователя не существует")

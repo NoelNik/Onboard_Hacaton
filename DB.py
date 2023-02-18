@@ -93,7 +93,9 @@ def check_for_notifications(telegramID):
 
 
 def getData(telegramID):
-    return cur.execute(f"""SELECT comingData FROM interns WHERE TelegramID = '{telegramID}'""").fetchone()[0]
+    data = cur.execute(f"""SELECT comingData FROM interns WHERE TelegramID = '{telegramID}'""").fetchone()
+    if data:
+        return data[0]
 
 
 def if_user_exist(telegramID):
