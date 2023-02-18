@@ -13,7 +13,6 @@ def newUser(telegramID):
         con.commit()
 
 
-# Проверить
 def newAdmin(telegramID):
     if not cur.execute(f"""SELECT TelegramID FROM Admins WHERE TelegramID = '{telegramID}'""").fetchone():
         cur.execute(f"""INSERT INTO Admins (Name, TelegramID) VALUES 
@@ -48,8 +47,15 @@ def check_for_win(telegramID):
 
 
 def check_for_data(telegramID):
-    # Уточнить, нужно ли расписывать метод получения призов за первую неделю работы.
-    pass
+    data = datetime.datetime.strptime(getData(telegramID), "%Y-%m-%d")
+    current_date = datetime.datetime.now()
+    dif = current_date - data
+    if dif == 7:
+        pass
+    elif dif == 14:
+        pass
+    elif dif == 30:
+        pass
 
 
 def getData(telegramID):
@@ -63,6 +69,7 @@ def if_user_exist(telegramID):
 def if_user_admin(telegramID):
     admin_list = [int(x[0]) for x in cur.execute(f"""SELECT TelegramID FROM admins""").fetchall()]
     return telegramID in admin_list
+
 
 def appendQueue(telegramID):
     cur.execute(f"""INSERT INTO queue (TelegramID) VALUES ('{telegramID}')""")

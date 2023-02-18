@@ -69,7 +69,7 @@ def message_echo(message):
                 bot.send_message(message.chat.id, f"До сноса всей программы осталось: {11 - i}")
             bot.stop_bot()
 
-    # user часть меню
+
     if message.text == "Рассказать про нашу компанию":
         bot.send_message(message.chat.id, "Перейди по ссылке за всей нужной информацией :)")
         bot.send_message(message.chat.id, "https://disk.yandex.ru/d/SO7F8r0xI3DAsg")
@@ -114,17 +114,6 @@ def message_echo(message):
         bot.send_message(message.chat.id, "Я не понял вашу команду", reply_markup=markup)
 
 
-def get_documents(message):
-    if message.text == "Для устройства на работу":
-        bot.send_message(message.chat.id, "тут будут доки для устройства на работу, когда Никита их допишет")
-    elif message.text == "Как уйти в отпуск?":
-        bot.send_message(message.chat.id, "тут будут доки для отпуска")
-    elif message.text == "Увольнение":
-        getAwayDoc = open('media/documents/potom_pomenyaem.docx', 'rb')
-        bot.send_document(message.chat.id, getAwayDoc, caption="В таком случае, заполните это заявление")
-    else:
-        bot.send_message(message.chat.id, "Извините, я вас не понял")
-    menu(message)
 
 def chat_hr(message):
     DB.appendQueue(message.chat.id)
