@@ -166,5 +166,15 @@ def addTask(telegramID, newTask):
     return "Задание обновлено"
 
 
+# TODO:
+# def addValue(values):
+#     cur.execute(f"""INSERT INTO tasks VALUES(
+#     {values[0]},
+#     '{values[1]}',
+#     '{values[2]}',
+#     '{values[3]}',
+#     )""")
+#     con.commit()
+
 def addPoints(telegramID, quantity):
     cur.execute(f"""UPDATE interns set exp = '{getExp(telegramID) + quantity}' WHERE TelegramID = '{telegramID}'""")

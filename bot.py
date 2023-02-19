@@ -152,6 +152,9 @@ def message_echo(message):
         # TODO
         if message.text == "Добавить задания 💡":
             pass
+            # TODO:
+            # bot_msg = bot.send_message(message.chat.id, "Введите ID пользователя")
+            # bot.register_next_step_handler(bot_msg, askDescription)
 
         elif message.text == "Показать профили работников 🪪":
             data = DB.get_info_of_workers()
@@ -245,6 +248,33 @@ def deleteIntern(message):
     else:
         bot.send_message(message.chat.id, "Такого пользователя не существует")
     menu_for_admin(message)
+
+
+# не доделал. спать хочу
+# def askDescription(message):
+#     id = message.text
+#     bot_msg = bot.send_message(message.chat.id, "Введите описание задачи")
+#     bot.register_next_step_handler(bot_msg, askQuantity, id)
+
+# def askQuantity(message, id):
+#     description = message.text
+#     bot_msg = bot.send_message(message.chat.id, "Введите ценность задачи")
+#     bot.register_next_step_handler(bot_msg, askDeadline, id, description)
+
+# def askDeadline(message, id, description):
+#     quantity = message.text
+#     bot_msg = bot.send_message(message.chat.id, "Введите дедлайн")
+#     bot.register_next_step_handler(bot_msg, askDeadline, id, description, quantity)
+
+# def addValues(message, id, description, quantity):
+#     deadline = message.text
+#     DB.addValue([id, description, quantity, deadline])
+#     bot.send_message(message.chat,id, "Задача успешно внесена")
+#     menu(message)
+
+
+
+
 
 def start():
     bot.infinity_polling()
