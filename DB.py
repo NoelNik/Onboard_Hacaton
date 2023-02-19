@@ -31,7 +31,8 @@ def getExp(telegramID):
 
 def check_for_win(telegramID):
     stage = cur.execute(f"""SELECT stage FROM interns WHERE TelegramID = '{telegramID}'""").fetchone()[0]
-    prize_list = {"first": ["Стикер", "ручка"], "second": ["худи", "мышка"], "third": ["яхта", "машина"]}
+    # список может дополняться
+    prize_list = {"first": ["стикер", "ручку"], "second": ["худи", "мышку"], "third": ["яхту", "машину"]}
     quantity_for_first = 15
     quantity_for_second = 30
     quantity_for_third = 45
@@ -79,6 +80,7 @@ def getCurrentDate():
 def check_for_data(telegramID):
     data = datetime.datetime.strptime(getData(telegramID), "%Y-%m-%d")
     current_date = datetime.datetime.today()
+    # 180 – это кол-во дней в полугоде
     dif = 180 - (current_date - data).days
     return dif
 
@@ -126,7 +128,6 @@ def deleteChatActive(TelegramID):
     con.commit()
 
 
-# TODO: Вылетает ошибка при закрытие чата со стороны стажера.
 def isChatActive(TelegramID):
     data = cur.execute(f"""SELECT idIntern, idAdmin FROM activeChat""").fetchall()
     for s in data:
