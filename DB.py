@@ -6,10 +6,10 @@ con = sqlite3.connect("baza.db", check_same_thread=False)
 cur = con.cursor()
 
 
-def newUser(telegramID):
+def newUser(telegramID, username):
     if not cur.execute(f"""SELECT TelegramID FROM interns WHERE TelegramID = '{telegramID}'""").fetchone():
-        cur.execute(f"""INSERT INTO interns (comingData, TelegramID) VALUES 
-            ('{datetime.date.today()}', '{telegramID}')""")
+        cur.execute(f"""INSERT INTO interns (comingData, TelegramID, username) VALUES 
+            ('{datetime.date.today()}', '{telegramID}', '{username}')""")
         con.commit()
 
 

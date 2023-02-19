@@ -11,7 +11,7 @@ def welcome(message):
     if (str(message.chat.id),) in DB.getQueue():
         bot.send_message(message.chat.id, "Вы в очереди! Нажмите на кнопку остановить поиск.")
     else:
-        DB.newUser(message.chat.id)
+        DB.newUser(message.chat.id, message.from_user.username)
         bot.send_message(message.chat.id, "Привет! Я буду твоим помошником для удобной адаптации к новой рабочей среде")
         # id стикера сонечки "привет"
         sti = "CAACAgIAAxkBAAIFvWPxO2FdGo8UfSj66TNhsQABzAPKDwACmycAAnPWiUs2VR7lGKIKCy4E"
@@ -59,7 +59,7 @@ def menu_for_admin(message):
         if DB.if_user_admin(message.chat.id):
             markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=3)
             item1 = types.KeyboardButton('Добавить задания 💡')
-            item2 = types.KeyboardButton('Показать профиль работника 🪪')
+            item2 = types.KeyboardButton('Показать профили работников 🪪')
             item3 = types.KeyboardButton('Открыть диалог со стажером 🗣️')
             item4 = types.KeyboardButton('Удалить работника 🥺')
             item5 = types.KeyboardButton('/menu')
@@ -142,7 +142,7 @@ def message_echo(message):
         bot_msg = bot.send_message(message.chat.id, "Какой документ вас интересует?", reply_markup=markup)
         bot.register_next_step_handler(bot_msg, get_documents)
 
-    
+
 
     elif message.text == "Получить приз 🏆":
         bot.send_message(message.chat.id, DB.check_for_win(message.chat.id))
@@ -153,11 +153,13 @@ def message_echo(message):
         if message.text == "Добавить задания 💡":
             pass
 
-        elif message.text == "Показать профиль работника 🪪":
+        elif message.text == "Показать профили работников 🪪":
             data = DB.get_info_of_workers()
+            msg = ""
             for num, elem in enumerate(data, start=1):
-                bot.send_message(message.chat.id,
-                                 f"{num}. Дата регистрации - {elem[0]};\nкол-во баллов - {elem[2]};\nготовность к встрече: {elem[3]}")
+                msg += f"{num}. @{elem[2]};\nдата регистрации - {elem[0]};\nкол-во баллов - {elem[3]};\nготовность к встрече: {elem[4]}\n\n"
+            bot.send_message(message.chat.id, msg)
+                                 
 
         elif message.text == "Удалить работника 🥺":
             bot_msg = bot.send_message(message.chat.id, "Введите ID работника, которого желаете удалить")
