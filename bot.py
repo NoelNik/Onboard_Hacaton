@@ -47,7 +47,7 @@ def menu(message):
         markup.add(item1, item2, item3, item4, item5, item6, item7)
         if DB.if_user_admin(message.chat.id):
             markup.add(types.KeyboardButton('/menu_for_admin'))
-        bot.send_message(message.chat.id, f'С чем вам почочь, {message.chat.first_name}?',
+        bot.send_message(message.chat.id, f'С чем вам помочь, {message.chat.first_name}?',
                          reply_markup=markup)
 
 
